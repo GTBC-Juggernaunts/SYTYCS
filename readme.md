@@ -7,9 +7,12 @@
   + Peter Huynh - frontend 
   + Darron Biles - PM
 + Project Description
-  + For our first project we wanted to demonstrate ....
+  + Tired of looking for old songs to sing along with your friends on the internet?
+  + Have a bunch of friends over looking for something to do?
+    +  Well, STYTCS solves this issue. We have a ton of songs available old and new!
+    +  You can even have the artist sing along with you to make it a bit more immersive (unless you really are bad at singing!)
 + Sketch of Final Product
-  + [Wireframed Iamge]
+  + 
 + APIs to be Used
   + Spotify
   + MusicxMatch
