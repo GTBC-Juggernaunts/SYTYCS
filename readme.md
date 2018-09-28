@@ -1,22 +1,20 @@
-# Project 1 [Replace with name of app]
+# SYTYCS
 
 + Project Title
-  + Project Name
+  + STYCS - So You Think You Can Sing
 + Team Members
-  + Mike Gross
-  + Peter Huynh
-  + Darron Biles
+  + Mike Gross - backend
+  + Peter Huynh - frontend 
+  + Darron Biles - PM
 + Project Description
   + For our first project we wanted to demonstrate ....
 + Sketch of Final Product
   + [Wireframed Iamge]
 + APIs to be Used
-  + API 1
-  + API 2
-  + API 3
+  + Spotify
+  + MusicxMatch
+  + Lyircs.OHV
 + Rough Breakdown of Tasks
-  + Brainstorm
-  + Git Workflow
   + Establish Base Repo
   + Form Layout
   + Connect APIs and dynamic data
@@ -26,15 +24,22 @@
 ### MUST HAVE
 
 + Must use at least two APIs
+  + Listed Above
 + Must use AJAX to pull data
+  + Axios
 + Must utilize at least one new library or technology that we haven’t discussed
+  + Firebase Auth
 + Must have a polished frontend / UI
+  + UIKit / Material
 + Must meet good quality coding standards (indentation, scoping, naming)
 + Must NOT use alerts, confirms, or prompts (look into modals!)
 + Must have some sort of repeating element (table, columns, etc)
 + Must use Bootstrap or Alternative CSS Framework
+  + UIKIT
 + Must be Deployed (Github Pages)
+  + Done
 + Must have User Input Validation
+  + Done
 
 ### NICE TO HAVE
 
