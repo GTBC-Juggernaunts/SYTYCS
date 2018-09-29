@@ -20,5 +20,7 @@
     
 ## Considerations
 * What happens when a host leaves the game?
+* Hide isHost variable so hackers can't mess shit up
+
    
  
