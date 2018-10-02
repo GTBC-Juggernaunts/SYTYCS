@@ -22,6 +22,7 @@ const triviaAPI = {
       console.log(results.correct_answer);
       console.log(answers);
       game.displayQ(results.question, answers);
+      game.startTimer();
     });
   },
 
@@ -70,6 +71,7 @@ const game = {
       }
     },1000);
     game.intervalId = setInterval(decrement, 10);
+    $(document).on("click",".answers",game.onClick)
   },
   endQuestion: function(){
     game.currentQStatus = "Inactive";
@@ -93,3 +95,5 @@ const game = {
 //=====================================================================================================================
 //Game Runtime
 //=====================================================================================================================
+
+triviaAPI.questionReturn();
