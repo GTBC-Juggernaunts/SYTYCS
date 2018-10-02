@@ -1,6 +1,8 @@
-const
+//=====================================================================================================================
+//Trivia API and all related methods
+//=====================================================================================================================
 
-triviaAPI = {
+const triviaAPI = {
   queryUrl:'https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple',
   questionReturn: function () {
     $.ajax({
@@ -14,13 +16,16 @@ triviaAPI = {
       results.incorrect_answers.forEach(answer => {
         answers.push(answer)
       });
+      game.currentQStatus = "Active";
+      game.correctAnswer = results.correct_answer;
       triviaAPI.shuffle(answers);
       console.log(results.correct_answer);
       console.log(answers);
-      triviaAPI.displayQ(results.question, answers);
+      game.displayQ(results.question, answers);
     });
   },
 
+  //Taken from stack overflow @ https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
   shuffle: function (a) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
@@ -31,7 +36,22 @@ triviaAPI = {
     }
     return a;
   },
+  //END OF STEALING
 
+};
+
+//=====================================================================================================================
+//Game Methods
+//=====================================================================================================================
+
+const game = {
+  points: 0,
+  questionTimer: 10,
+  questionIntervalId,
+  intervalId,
+  userPoints: 0,
+  currentQStatus: "Inactive",
+  correctAnswer: "",
   displayQ: function(question,answers) {
     $("#question").html(`<h4>${question}</h4>`);
     $("#answer1").text(answers[0]);
@@ -39,6 +59,37 @@ triviaAPI = {
     $("#answer3").text(answers[2]);
     $("#answer4").text(answers[3]);
   },
+  decrement: function(){
+    game.points -= 1;
+  },
+  startTimer: function() {
+    game.questionIntervalId = setInterval(()=>{
+      game.questionTimer -= 1;
+      if(game.questionTImer === 0) {
+        game.endQuestion;
+      }
+    },1000);
+    game.intervalId = setInterval(decrement, 10);
+  },
+  endQuestion: function(){
+    game.currentQStatus = "Inactive";
+    setTimeout(triviaAPI.questionReturn,3000)
+  },
+  onClick: function(answer) {
+   clearInterval(intervalId);
+   if(answer === game.correctAnswer && game.currentQStatus === "Active"){
+     game.userPoints += game.points;
+     game.currentQStatus = "Inactive";
+   }
+   else{
+     game.currentQStatus = "Inactive";
+   }
+  }
 };
 
 
+
+
+//=====================================================================================================================
+//Game Runtime
+//=====================================================================================================================
