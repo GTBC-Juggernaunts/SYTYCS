@@ -2,44 +2,75 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AYSTAB</title>
-  <!-- Material Icon CDN -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
-    crossorigin="anonymous">
-  <!-- Reset CSS -->
-  <link rel="stylesheet" href="./assets/css/reset.css">
-  <!-- Compiled and minified CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AYSTAB</title>
+    <!-- Material Icon CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous">
+    <!-- Reset CSS -->
+    <link rel="stylesheet" href="./assets/css/reset.css">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
 </head>
 
 <body>
 
-  <!-- Navbar -->
-  <nav>
-    <div class="nav-wrapper navbar-fixed z-depth-2 green accent-2">
-      <a href="#" class="brand-logo center"><i class="fas fa-chalkboard"></i>AYSTAB</a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <!-- <li><a class="btn waves-effect" id="sign-up">Sign Up</a></li> -->
-        <!-- <li><a class="btn waves-effect" id="login-google">Login With Google</a></li> -->
-        <li><a class="btn waves-effect tooltipped" data-position="bottom" data-tooltip="Sign up as a new user here" id="login">Login
-            With Twitter</a></li>
-        <li><a class="btn waves-effect" id="logout">Logout</a></li>
-      </ul>
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-wrapper navbar-fixed z-depth-2 green accent-2">
+            <a href="#" class="brand-logo center"><i class="fas fa-chalkboard"></i>AYSTAB</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <!-- <li><a class="btn waves-effect" id="sign-up">Sign Up</a></li> -->
+                <!-- <li><a class="btn waves-effect" id="login-google">Login With Google</a></li> -->
+                <li><a class="btn waves-effect tooltipped" data-position="bottom" data-tooltip="Sign up as a new user here"
+                        id="login">Login
+                        With Twitter</a></li>
+                <li><a class="btn waves-effect" id="logout">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- Game -->
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12">
+                <div class="card blue-grey darken-1">
+                    <div class="card-content z-depth-2 green accent-2">
+                        <ul class="collection with-header">
+                            <li class="collection-header" id="question">
+                                <h4>Question</h4>
+                            </li>
+                            <li class="answer collection-item">
+                                <div class="answer" id="answer1">Q1<a href="#!" class="secondary-content"></a></div>
+                            </li>
+                            <li class="answer collection-item">
+                                <div class="answer" id="answer2">Q2<a href="#!" class="secondary-content"></a></div>
+                            </li>
+                            <li class="answer collection-item">
+                                <div class="answer" id="answer3">Q3<a href="#!" class="secondary-content"></a></div>
+                            </li>
+                            <li class="answer collection-item">
+                                <div class="answer" id="answer4">Q4<a href="#!" class="secondary-content"></a></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
 
 </body>
 <!-- firebase -->
 <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
 <!-- jQuery CDN -->
 <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-  crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <!-- Support Files -->
@@ -47,5 +78,6 @@
 <script type="module" src="./assets/js/materialize.js"></script>
 <script type="module" src="./assets/js/opentb.js"></script>
 <script type="module" src="./assets/js/twitter.js"></script>
+<script type="module" src="./assets/js/trivia.js"></script>
 
 </html>
