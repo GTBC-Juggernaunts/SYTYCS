@@ -1,0 +1,18 @@
+/* Progress Bar */
+.progress-bar {
+  background-color: #181A17;
+  text-align: center;
+}
+
+#progress-bar-value {
+  color: ghostwhite;
+  background-color: blue;
+  width: 1%;
+  text-align: center;
+  line-height: 40px;
+}
+
+small {
+  color: ghostwhite;
+  text-align: center;
+}
