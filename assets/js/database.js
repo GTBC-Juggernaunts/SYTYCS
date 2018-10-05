@@ -1,5 +1,5 @@
 import config from "./firebase.js";
-import firebaseAuth from "./firebase.js";
+import firebaseAuth from "/firebase.js";
 
 firebase.initializeApp(config);
 
