@@ -1,4 +1,11 @@
 //=====================================================================================================================
+//Import Modules
+//=====================================================================================================================
+import { config } from "./firebase.js";
+firebase.initializeApp(config);
+import { firebaseAuth } from "./firebase.js";
+// console.log(firebaseAuth.currentUser);
+//=====================================================================================================================
 //Trivia API and all related methods
 //=====================================================================================================================
 
@@ -13,9 +20,9 @@ const triviaAPI = {
       console.log(response);
       let answers = [];
       let results = response.results[0];
-      answers.push(results.correct_answer);
+      answers.push(decodeURI(results.correct_answer));
       results.incorrect_answers.forEach(answer => {
-        answers.push(answer);
+        answers.push(decodeURI(answer));
       });
       game.currentQStatus = "Active";
       game.correctAnswer = results.correct_answer;
@@ -46,6 +53,10 @@ const triviaAPI = {
 //=====================================================================================================================
 
 const game = {
+  userId: "",
+  sessionId: "",
+  isHost: false,
+  isActive: false,
   points: 0,
   questionTimer: 10,
   questionIntervalId: "",
@@ -62,6 +73,8 @@ const game = {
   },
   decrementPoints: function() {
     game.points -= 1;
+    $("#progress-bar-value").text(`${game.points}pts`);
+    $("#progress-bar-value").css("width",game.points/10 + '%')
   },
 
   decrementQ: function() {
@@ -76,6 +89,7 @@ const game = {
     game.points = 1000;
     game.questionIntervalId = setInterval(game.decrementQ, 1000);
     game.intervalId = setInterval(game.decrementPoints, 10);
+    $("#progress-bar-value").text('1000pts')
   },
 
   endQuestion: function() {
@@ -87,8 +101,20 @@ const game = {
     setTimeout(triviaAPI.questionReturn, 3000);
   },
 
-  onClick: function(answer) {
-    console.log(answer);
+  unselector: function() {
+    let collections = $(".answer");
+    console.log(collections);
+    for(let i = 0; i < collections.length; i++) {
+      $(collections[i]).parent().removeClass('active');
+    }
+  },
+
+  onClick: function(event) {
+    //TODO delay points until end of question in case answer changes
+    console.log(event);
+    game.unselector();
+    let answer = event[0].target.innerText;
+    $(event[0].target).parent().addClass('active');
     clearInterval(game.intervalId);
     if (answer === game.correctAnswer && game.currentQStatus === "Active") {
       game.userPoints += game.points;
@@ -106,7 +132,9 @@ const game = {
 //Game Runtime
 //=====================================================================================================================
 
+
+
 triviaAPI.questionReturn();
 $(".answer").click(event => {
-  game.onClick($(event.target).text());
+  game.onClick($(event));
 });
