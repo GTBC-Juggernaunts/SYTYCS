@@ -1,18 +1,12 @@
 //=====================================================================================================================
-//Import Modules
-//=====================================================================================================================
-import { config } from "./firebase.js";
-firebase.initializeApp(config);
-import { firebaseAuth } from "./firebase.js";
-// console.log(firebaseAuth.currentUser);
-//=====================================================================================================================
 //Trivia API and all related methods
 //=====================================================================================================================
 
 const triviaAPI = {
   queryUrl:
-    "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple",
+    "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=base64",
   questionReturn: function() {
+    game.unselector();
     $.ajax({
       url: triviaAPI.queryUrl,
       method: "GET"
@@ -20,16 +14,16 @@ const triviaAPI = {
       console.log(response);
       let answers = [];
       let results = response.results[0];
-      answers.push(decodeURI(results.correct_answer));
+      answers.push(atob(results.correct_answer));
       results.incorrect_answers.forEach(answer => {
-        answers.push(decodeURI(answer));
+        answers.push(atob(answer));
       });
       game.currentQStatus = "Active";
-      game.correctAnswer = results.correct_answer;
+      game.correctAnswer = atob(results.correct_answer);
       triviaAPI.shuffle(answers);
       console.log(results.correct_answer);
       console.log(answers);
-      game.displayQ(results.question, answers);
+      game.displayQ(atob(results.question), answers);
       game.startTimer();
     });
   },
@@ -64,6 +58,8 @@ const game = {
   userPoints: 0,
   currentQStatus: "Inactive",
   correctAnswer: "",
+  selectedAnswer: "",
+  selectionTimer: 0, //masking name of variable so people don't immediately change it
   displayQ: function(question, answers) {
     $("#question").html(`<h4>${question}</h4>`);
     $("#answer1").text(answers[0]);
@@ -71,15 +67,18 @@ const game = {
     $("#answer3").text(answers[2]);
     $("#answer4").text(answers[3]);
   },
+
   decrementPoints: function() {
     game.points -= 1;
     $("#progress-bar-value").text(`${game.points}pts`);
-    $("#progress-bar-value").css("width",game.points/10 + '%')
+    $("#progress-bar-value").css("width",(1000-game.points)/10 + '%')
   },
 
   decrementQ: function() {
     game.questionTimer -= 1;
     if (game.questionTimer === 0) {
+      game.points = 1;
+      game.decrementPoints();
       game.endQuestion();
     }
   },
@@ -96,8 +95,18 @@ const game = {
     game.currentQStatus = "Inactive";
     clearInterval(game.questionIntervalId);
     clearInterval(game.intervalId);
-    console.log(game.points);
-    console.log("end of question");
+    console.log(`Possible Points: ${game.selectionTimer}`);
+    console.log("End of question");
+    //check for if answer matches the correct answer
+    if (game.selectedAnswer === btoa(game.correctAnswer)) {
+      game.userPoints += game.selectionTImer;
+      console.log(game.points);
+      console.log(game.currentQStatus);
+      game.currentQStatus = "Inactive";
+      console.log(game.currentQStatus);
+    } else {
+      game.currentQStatus = "Inactive";
+    }
     setTimeout(triviaAPI.questionReturn, 3000);
   },
 
@@ -110,20 +119,15 @@ const game = {
   },
 
   onClick: function(event) {
-    //TODO delay points until end of question in case answer changes
-    console.log(event);
-    game.unselector();
-    let answer = event[0].target.innerText;
-    $(event[0].target).parent().addClass('active');
-    clearInterval(game.intervalId);
-    if (answer === game.correctAnswer && game.currentQStatus === "Active") {
-      game.userPoints += game.points;
-      console.log(game.points);
-      console.log(game.currentQStatus);
-      game.currentQStatus = "Inactive";
-      console.log(game.currentQStatus);
-    } else {
-      game.currentQStatus = "Inactive";
+    if(game.currentQStatus === "Inactive"){
+      console.log("Question not active.")
+    }
+    else {
+      console.log(event);
+      game.unselector();
+      game.selectedAnswer = event[0].target.innerText;
+      game.selectionTimer = game.points;
+      $(event[0].target).parent().addClass('active');
     }
   }
 };
@@ -131,8 +135,6 @@ const game = {
 //=====================================================================================================================
 //Game Runtime
 //=====================================================================================================================
-
-
 
 triviaAPI.questionReturn();
 $(".answer").click(event => {
