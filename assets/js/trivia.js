@@ -1,36 +1,35 @@
 //=====================================================================================================================
-//Import Modules
-//=====================================================================================================================
-//=====================================================================================================================
 //Trivia API and all related methods
 //=====================================================================================================================
 
 const triviaAPI = {
-  queryUrl:'https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple',
-  questionReturn: function () {
+  queryUrl:
+    "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=base64",
+  questionReturn: function() {
+    game.unselector();
     $.ajax({
       url: triviaAPI.queryUrl,
-      method: "GET",
+      method: "GET"
     }).then(response => {
-      // console.log(response);
+      console.log(response);
       let answers = [];
       let results = response.results[0];
-      answers.push(decodeURI(results.correct_answer));
+      answers.push(atob(results.correct_answer));
       results.incorrect_answers.forEach(answer => {
-        answers.push(decodeURI(answer));
+        answers.push(atob(answer));
       });
       game.currentQStatus = "Active";
-      game.correctAnswer = results.correct_answer;
+      game.correctAnswer = atob(results.correct_answer);
       triviaAPI.shuffle(answers);
-      // console.log(results.correct_answer);
-      // console.log(answers);
-      game.displayQ(results.question, answers);
+      console.log(results.correct_answer);
+      console.log(answers);
+      game.displayQ(atob(results.question), answers);
       game.startTimer();
     });
   },
 
   //Stolen shamelessly from stack overflow @ https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-  shuffle: function (a) {
+  shuffle: function(a) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
       j = Math.floor(Math.random() * (i + 1));
@@ -39,7 +38,7 @@ const triviaAPI = {
       a[j] = x;
     }
     return a;
-  },
+  }
   //END OF STEALING #MUSA
 };
 
@@ -59,22 +58,27 @@ const game = {
   userPoints: 0,
   currentQStatus: "Inactive",
   correctAnswer: "",
-  displayQ: function(question,answers) {
+  selectedAnswer: "",
+  selectionTimer: 0, //masking name of variable so people don't immediately change it
+  displayQ: function(question, answers) {
     $("#question").html(`<h4>${question}</h4>`);
     $("#answer1").text(answers[0]);
     $("#answer2").text(answers[1]);
     $("#answer3").text(answers[2]);
     $("#answer4").text(answers[3]);
   },
-  decrementPoints: function(){
+
+  decrementPoints: function() {
     game.points -= 1;
     $("#progress-bar-value").text(`${game.points}pts`);
-    $("#progress-bar-value").css("width",game.points/10 + '%')
+    $("#progress-bar-value").css("width",(1000-game.points)/10 + '%')
   },
 
   decrementQ: function() {
     game.questionTimer -= 1;
-    if(game.questionTimer === 0) {
+    if (game.questionTimer === 0) {
+      game.points = 1;
+      game.decrementPoints();
       game.endQuestion();
     }
   },
@@ -82,19 +86,29 @@ const game = {
   startTimer: function() {
     game.questionTimer = 10;
     game.points = 1000;
-    game.questionIntervalId = setInterval(game.decrementQ,1000);
+    game.questionIntervalId = setInterval(game.decrementQ, 1000);
     game.intervalId = setInterval(game.decrementPoints, 10);
     $("#progress-bar-value").text('1000pts')
   },
 
-  endQuestion: function(){
+  endQuestion: function() {
     game.currentQStatus = "Inactive";
     clearInterval(game.questionIntervalId);
     clearInterval(game.intervalId);
-    // console.log(game.points);
-    // console.log("end of question");
-    setTimeout(triviaAPI.questionReturn,3000)
+    console.log(`Possible Points: ${game.selectionTimer}`);
+    console.log("End of question");
+    //check for if answer matches the correct answer
+    if (game.selectedAnswer === btoa(game.correctAnswer)) {
+      console.log(`Correct!`);
+      game.userPoints += game.selectionTImer;
+      console.log(game.userPoints);
+      game.currentQStatus = "Inactive";
+    } else {
+      game.currentQStatus = "Inactive";
+    }
+    setTimeout(triviaAPI.questionReturn, 3000);
   },
+
   unselector: function() {
     let collections = $(".answer");
     console.log(collections);
@@ -104,30 +118,22 @@ const game = {
   },
 
   onClick: function(event) {
-    //TODO delay points until end of question in case answer changes
-    console.log(event);
-    game.unselector();
-    let answer = event[0].target.innerText;
-    $(event[0].target).parent().addClass('active');
-    clearInterval(game.intervalId);
-    if (answer === game.correctAnswer && game.currentQStatus === "Active") {
-      game.userPoints += game.points;
-      console.log(game.points);
-      console.log(game.currentQStatus);
-      game.currentQStatus = "Inactive";
-      console.log(game.currentQStatus);
-    } else {
-      game.currentQStatus = "Inactive";
+    if(game.currentQStatus === "Inactive"){
+      console.log("Question not active.")
+    }
+    else {
+      console.log(event);
+      game.unselector();
+      game.selectedAnswer = event[0].target.innerText;
+      game.selectionTimer = game.points;
+      $(event[0].target).parent().addClass('active');
     }
   }
 };
 
-
 //=====================================================================================================================
 //Game Runtime
 //=====================================================================================================================
-
-
 
 triviaAPI.questionReturn();
 $(".answer").click(event => {
