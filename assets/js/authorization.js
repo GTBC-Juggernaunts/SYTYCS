@@ -3,9 +3,11 @@ console.log(config);
 
 // create instance of Google provider object
 export const auth = firebase.auth();
-const provider = new firebase.auth.TwitterAuthProvider();
+const provider = new firebase.auth.GoogleAuthProvider();
 const database = firebase.database();
-const activeUsersRef = database.ref("game/activeUsers/");
+
+// ref for checking if user isHost
+// const isHostRef = database.ref('games/activeUsers/');
 
 // grab login and logout buttons
 const logoutBtn = document.getElementById("logout");
@@ -13,8 +15,15 @@ const loginBtn = document.getElementById("login");
 
 // database object
 export const firebaseAuth = {
+  gameRef: database.ref("game/"),
+  activeHostRef: database.ref("game/activeHost"),
+  activeUsersRef: "",
   userDisplayName: "",
   loggedIn: "",
+  uid: "",
+  gameIsHost: "",
+  isHost: false,
+  timestamp: Date.now(),
   signOut: () => {
     auth.signOut();
   },
@@ -22,13 +31,9 @@ export const firebaseAuth = {
     auth
       .signInWithRedirect(provider)
       .them(result => {
-        // this gives you a google access token. Used to access the google api
-        const token = result.credential.accessToken;
-        // the signed-in user info
-        const user = result.user;
+        console.log(result);
       })
       .catch(error => {
-        // error handling here
         console.log(error);
       });
   },
@@ -37,30 +42,63 @@ export const firebaseAuth = {
       if (firebaseUser) {
         console.log("FirebaseUser object below");
         console.log(firebaseUser);
-        // firebase unique user id
+        // grab display name
         firebaseAuth.userDisplayName = firebaseUser.displayName;
-        console.log(`display name let: ${firebaseAuth.userDisplayName}`);
+        // grab unique user id
+        firebaseAuth.uid = firebaseUser.uid;
+        // create unique ref under activeUsers with the uid
+        firebaseAuth.activeUsersRef = database.ref(
+          `game/activeUsers/${firebaseAuth.uid}`
+        );
+        // hide login or logout buttons depending on if user is authenticated
         logoutBtn.classList.remove("hide");
         loginBtn.classList.add("hide");
         firebaseAuth.loggedIn = true;
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
-        firebaseAuth.insertActiveUser(firebaseAuth.userDisplayName,firebaseAuth.loggedIn);
-        // return firebaseUser.displayName;
+        firebaseAuth.insertActiveUser(
+          firebaseAuth.userDisplayName,
+          firebaseAuth.loggedIn,
+          firebaseAuth.timestamp,
+          firebaseAuth.isHost
+        );
+        firebaseAuth.gameHostCheck();
       } else {
         logoutBtn.classList.add("hide");
         loginBtn.classList.remove("hide");
         firebaseAuth.loggedIn = false;
-        console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
-        // return false;
+        firebaseAuth.activeUsersRef = database.ref(
+          `game/activeUsers/${firebaseAuth.uid}`
+        );
+        firebaseAuth.activeUsersRef.remove();
       }
     });
   },
-  insertActiveUser: (displayName, loggedIn) => {
+  insertActiveUser: (displayName, loggedIn, timestamp, isHost) => {
     const postData = {
       displayName,
-      loggedIn
+      loggedIn,
+      timestamp,
+      isHost
     };
-    activeUsersRef.push(postData);
+    firebaseAuth.activeUsersRef.set(postData);
+  },
+  userHostChecker: () => {
+    ref
+      .child("activeUsers")
+      .equalTo("true")
+      .once("value", snapshot => {
+        if (snapshot.exists()) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+  },
+  gameHostCheck: () => {
+      firebaseAuth.activeHostRef.once('value')
+      .then(snapshot=>{
+          console.log(`game host check object: ${snapshot.val()}`)
+      })
   }
 };
 
@@ -76,3 +114,20 @@ $("#login").on("click", event => {
 
 // listener for when authentication state changes
 firebaseAuth.AuthStateChanged();
+
+// if ishost = true exists then set ishost = false else isHost = true
+
+//every user must have an email
+// firebase.database().ref(`users/${userId}/email`).once("value", snapshot => {
+//     if (snapshot.exists()){
+//        console.log("exists!");
+//        const email = snapshot.val();
+//      }
+//  });
+
+//  ref.child("users").orderByChild("ID").equalTo("U1EL5623").once("value",snapshot => {
+//     if (snapshot.exists()){
+//       const userData = snapshot.val();
+//       console.log("exists!", userData);
+//     }
+// });
