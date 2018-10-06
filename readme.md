@@ -48,3 +48,7 @@
 - Utilize Firebase for Persistent Data Storage (Consider this basically a requirement).
 - Mobile Responsive
 - Use an alternative CSS framework like Materialize
+
+### Attributions / Credits
+
+Icon made by Freepik,Yannick,Mavadee from www.flaticon.com

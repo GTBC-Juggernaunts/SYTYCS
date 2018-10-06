@@ -1,3 +1,23 @@
+/* Page Rules */
+.row {
+  margin: 50px auto;
+}
+
+/* Modal */
+.modal {
+  width: 500px;
+  margin: 0 auto;
+}
+
+.modal-content .row {
+  margin: 0 auto;
+}
+
+/* Game Baord */
+.card-content > * {
+  text-align: center;
+}
+
 /* Progress Bar */
 .progress-bar {
   background-color: #181A17;
@@ -10,4 +30,22 @@
   width: 1%;
   text-align: center;
   line-height: 40px;
+}
+
+/* Sidebar */
+.collapsible-header > img {
+  height: 5%;
+  width: 5%;
+  margin-right: 15px;
+}
+
+.collapsible-body {
+  background-color: white;
+}
+
+/* Leaders */
+#leaders {
+  text-align: center;
+  display: block;
+  margin: 5px auto;
 }
