@@ -99,11 +99,10 @@ const game = {
     console.log("End of question");
     //check for if answer matches the correct answer
     if (game.selectedAnswer === btoa(game.correctAnswer)) {
+      console.log(`Correct!`);
       game.userPoints += game.selectionTImer;
-      console.log(game.points);
-      console.log(game.currentQStatus);
+      console.log(game.userPoints);
       game.currentQStatus = "Inactive";
-      console.log(game.currentQStatus);
     } else {
       game.currentQStatus = "Inactive";
     }
