@@ -1,4 +1,6 @@
-import { config } from "./firebase.js";
+import {config} from "./firebase.js";
+import {triviaAPI} from "./trivia.js";
+
 console.log(config);
 
 // create instance of Google provider object
@@ -29,13 +31,13 @@ export const firebaseAuth = {
   },
   signIn: () => {
     auth
-      .signInWithRedirect(provider)
-      .then(result => {
-        console.log(result);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+        .signInWithRedirect(provider)
+        .then(result => {
+          console.log(result);
+        })
+        .catch(error => {
+          console.log(error);
+        });
   },
   AuthStateChanged: () => {
     auth.onAuthStateChanged(firebaseUser => {
@@ -48,7 +50,7 @@ export const firebaseAuth = {
         firebaseAuth.uid = firebaseUser.uid;
         // create unique ref under activeUsers with the uid
         firebaseAuth.activeUsersRef = database.ref(
-          `game/activeUsers/${firebaseAuth.uid}`
+            `game/activeUsers/${firebaseAuth.uid}`
         );
         // hide login or logout buttons depending on if user is authenticated
         logoutBtn.classList.remove("hide");
@@ -56,10 +58,10 @@ export const firebaseAuth = {
         firebaseAuth.loggedIn = true;
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
         firebaseAuth.insertActiveUser(
-          firebaseAuth.userDisplayName,
-          firebaseAuth.loggedIn,
-          firebaseAuth.timestamp,
-          firebaseAuth.isHost
+            firebaseAuth.userDisplayName,
+            firebaseAuth.loggedIn,
+            firebaseAuth.timestamp,
+            firebaseAuth.isHost
         );
         firebaseAuth.gameHostCheck();
       } else {
@@ -67,9 +69,9 @@ export const firebaseAuth = {
         loginBtn.classList.remove("hide");
         firebaseAuth.loggedIn = false;
         firebaseAuth.activeUsersRef = database.ref(
-          `game/activeUsers/${firebaseAuth.uid}`
+            `game/activeUsers/${firebaseAuth.uid}`
         );
-        if(firebaseAuth.isHost){
+        if (firebaseAuth.isHost) {
           firebaseAuth.gameRef.update({
             activeHost: false
           })
@@ -89,52 +91,60 @@ export const firebaseAuth = {
   },
   userHostChecker: () => {
     ref
-      .child("activeUsers")
-      .equalTo("true")
-      .once("value", snapshot => {
-        if (snapshot.exists()) {
-          return false;
-        } else {
-          return true;
-        }
-      });
+        .child("activeUsers")
+        .equalTo("true")
+        .once("value", snapshot => {
+          if (snapshot.exists()) {
+            return false;
+          } else {
+            return true;
+          }
+        });
   },
   gameHostCheck: () => {
-      firebaseAuth.activeHostRef.once('value')
-      .then(snapshot=>{
-          console.log(`game host check object: ${snapshot.val()}`);
-        if (snapshot.val() === false) {
-          console.log("looking for new host");
-          database.ref("game/activeUsers/").once('value')
-              .then(usersSnapshot => {
-                let lowestTimestamp = 9999999999999;
-                let newHost = "";
-                usersSnapshot.forEach(user=>{
-                  if (user.val().timestamp < lowestTimestamp){
-                    newHost = user.key;
-                    lowestTimestamp = user.timestamp;
-                  }
-                console.log(`new possible host: ${newHost}`)
-                });
-                console.log(`new host determined: ${newHost}`);
-                if (newHost === firebaseAuth.uid) {
-                  console.log("setting new host");
-                  firebaseAuth.isHost = true;
-                  database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
-                    isHost: true
-                  })
-                      .then(function(){
-                        firebaseAuth.gameRef.update({
-                          activeHost: true
-                        })
-                      })
-                }
+    firebaseAuth.activeHostRef.once('value')
+    .then(snapshot => {
+      console.log(`game host check object: ${snapshot.val()}`);
+      if (snapshot.val() === false) {
+        console.log("looking for new host");
+        database.ref("game/activeUsers/").once('value')
+        .then(usersSnapshot => {
+          let lowestTimestamp = 9999999999999;
+          let newHost = "";
+          usersSnapshot.forEach(user => {
+            if (user.val().timestamp < lowestTimestamp) {
+              newHost = user.key;
+              lowestTimestamp = user.timestamp;
+            }
+            console.log(`new possible host: ${newHost}`)
+          });
+          console.log(`new host determined: ${newHost}`);
+          if (newHost === firebaseAuth.uid) {
+            console.log("setting new host");
+            firebaseAuth.isHost = true;
+            database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
+              isHost: true
+            })
+            .then(function () {
+              firebaseAuth.gameRef.update({
+                activeHost: true
               })
-        }
-      })
+            })
+          }
+        })
+      }
+    })
+  },
+
+  hostListener: function() {
+    database.ref('game/activeUsers').on('child_removed', function(data){
+      firebaseAuth.gameHostCheck();
+      if (firebaseAuth.isHost) {
+        triviaAPI.questionReturn();
+      }
+    })
   }
 };
-
 
 // signs out then authenticated user
 $("#logout").on("click", event => {
