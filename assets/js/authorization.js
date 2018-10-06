@@ -3,9 +3,9 @@ console.log(config);
 
 // create instance of Google provider object
 export const auth = firebase.auth();
-const provider = new firebase.auth.TwitterAuthProvider();
+const provider = new firebase.auth.GoogleAuthProvider();
 const database = firebase.database();
-const activeUsersRef = database.ref("game/activeUsers/");
+// const activeUsersRef = database.ref("game/activeUsers/");
 
 // grab login and logout buttons
 const logoutBtn = document.getElementById("logout");
@@ -13,8 +13,11 @@ const loginBtn = document.getElementById("login");
 
 // database object
 export const firebaseAuth = {
+  activeUsersRef: database.ref(`game/activeUsers/`),
   userDisplayName: "",
   loggedIn: "",
+  uid:'',
+  timestamp: Date.now(),
   signOut: () => {
     auth.signOut();
   },
@@ -39,12 +42,18 @@ export const firebaseAuth = {
         console.log(firebaseUser);
         // firebase unique user id
         firebaseAuth.userDisplayName = firebaseUser.displayName;
+        firebaseAuth.uid = firebaseUser.uid;
+        firebaseAuth.activeUsersRef = database.ref(`games/activeUsers/${firebaseAuth.uid}`)
         console.log(`display name let: ${firebaseAuth.userDisplayName}`);
         logoutBtn.classList.remove("hide");
         loginBtn.classList.add("hide");
         firebaseAuth.loggedIn = true;
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
-        firebaseAuth.insertActiveUser(firebaseAuth.userDisplayName,firebaseAuth.loggedIn);
+        firebaseAuth.insertActiveUser(
+          firebaseAuth.userDisplayName,
+          firebaseAuth.loggedIn,
+          firebaseAuth.timestamp
+        );
         // return firebaseUser.displayName;
       } else {
         logoutBtn.classList.add("hide");
@@ -55,12 +64,13 @@ export const firebaseAuth = {
       }
     });
   },
-  insertActiveUser: (displayName, loggedIn) => {
+  insertActiveUser: (displayName, loggedIn, timestamp) => {
     const postData = {
       displayName,
-      loggedIn
+      loggedIn,
+      timestamp
     };
-    activeUsersRef.push(postData);
+    firebaseAuth.activeUsersRef.set(postData);
   }
 };
 
@@ -76,3 +86,12 @@ $("#login").on("click", event => {
 
 // listener for when authentication state changes
 firebaseAuth.AuthStateChanged();
+
+// console.log(`uid: ${auth.currentUser.uid}`);
+// console.log(activeUsersRef);
+
+// activeUsersRef.set({
+//   status: "active",
+//   connectionTime: "time",
+//   isHost: false
+// });
