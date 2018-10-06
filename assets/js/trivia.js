@@ -1,8 +1,14 @@
 //=====================================================================================================================
+//Import Modules
+//=====================================================================================================================
+
+import { firebaseAuth } from "./authorization.js";
+
+//=====================================================================================================================
 //Trivia API and all related methods
 //=====================================================================================================================
 
-const triviaAPI = {
+export const triviaAPI = {
   queryUrl:
     "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=base64",
   questionReturn: function() {
@@ -45,10 +51,9 @@ const triviaAPI = {
 //Game Methods
 //=====================================================================================================================
 
-const game = {
+export const game = {
   userId: "",
   sessionId: "",
-  isHost: false,
   isActive: false,
   points: 0,
   questionTimer: 10,
@@ -106,7 +111,9 @@ const game = {
       game.currentQStatus = "Inactive";
       console.log(`Correct Answer: ${atob(game.correctAnswer)}`);
     }
-    setTimeout(triviaAPI.questionReturn, 3000);
+    if (firebaseAuth.isHost === true) {
+      setTimeout(triviaAPI.questionReturn, 3000);
+    }
   },
 
   unselector: function() {
@@ -133,7 +140,9 @@ const game = {
 //Game Runtime
 //=====================================================================================================================
 
-triviaAPI.questionReturn();
+if(firebaseAuth.isHost === true){
+  triviaAPI.questionReturn();
+}
 $(".answer").click(event => {
   game.onClick($(event));
 });
