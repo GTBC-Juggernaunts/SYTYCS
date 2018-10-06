@@ -19,10 +19,9 @@ const triviaAPI = {
         answers.push(atob(answer));
       });
       game.currentQStatus = "Active";
-      game.correctAnswer = atob(results.correct_answer);
+      game.correctAnswer = (results.correct_answer);
       triviaAPI.shuffle(answers);
-      console.log(results.correct_answer);
-      console.log(answers);
+      console.log(`correct answer: ${results.correct_answer}`);
       game.displayQ(atob(results.question), answers);
       game.startTimer();
     });
@@ -98,20 +97,20 @@ const game = {
     console.log(`Possible Points: ${game.selectionTimer}`);
     console.log("End of question");
     //check for if answer matches the correct answer
-    if (game.selectedAnswer === btoa(game.correctAnswer)) {
+    if (game.selectedAnswer === atob(game.correctAnswer)) {
       console.log(`Correct!`);
-      game.userPoints += game.selectionTImer;
+      game.userPoints += game.selectionTimer;
       console.log(game.userPoints);
       game.currentQStatus = "Inactive";
     } else {
       game.currentQStatus = "Inactive";
+      console.log(`Correct Answer: ${atob(game.correctAnswer)}`);
     }
     setTimeout(triviaAPI.questionReturn, 3000);
   },
 
   unselector: function() {
     let collections = $(".answer");
-    console.log(collections);
     for(let i = 0; i < collections.length; i++) {
       $(collections[i]).parent().removeClass('active');
     }
@@ -122,7 +121,6 @@ const game = {
       console.log("Question not active.")
     }
     else {
-      console.log(event);
       game.unselector();
       game.selectedAnswer = event[0].target.innerText;
       game.selectionTimer = game.points;
