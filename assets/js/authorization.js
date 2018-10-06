@@ -7,7 +7,7 @@ const provider = new firebase.auth.GoogleAuthProvider();
 const database = firebase.database();
 
 // ref for checking if user isHost
-const isHostRef = database.ref('games/activeUsers/');
+// const isHostRef = database.ref('games/activeUsers/');
 
 // grab login and logout buttons
 const logoutBtn = document.getElementById("logout");
@@ -15,6 +15,7 @@ const loginBtn = document.getElementById("login");
 
 // database object
 export const firebaseAuth = {
+isHostRef: database.ref('games/activeUsers/'),
   activeUsersRef: "",
   userDisplayName: "",
   loggedIn: "",
@@ -52,7 +53,7 @@ export const firebaseAuth = {
         loginBtn.classList.add("hide");
         firebaseAuth.loggedIn = true;
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
-        firebaseAuth.hostChecker(isHostRef);
+        firebaseAuth.hostChecker(firebaseAuth.isHostRef);
         firebaseAuth.insertActiveUser(
           firebaseAuth.userDisplayName,
           firebaseAuth.loggedIn,
