@@ -15,12 +15,14 @@ const loginBtn = document.getElementById("login");
 
 // database object
 export const firebaseAuth = {
-isHostRef: database.ref('games/activeUsers/'),
+  gameRef: database.ref("game/"),
+  activeHostRef: database.ref("game/activeHost"),
   activeUsersRef: "",
   userDisplayName: "",
   loggedIn: "",
   uid: "",
-  isHost: '',
+  gameIsHost: "",
+  isHost: false,
   timestamp: Date.now(),
   signOut: () => {
     auth.signOut();
@@ -46,26 +48,26 @@ isHostRef: database.ref('games/activeUsers/'),
         firebaseAuth.uid = firebaseUser.uid;
         // create unique ref under activeUsers with the uid
         firebaseAuth.activeUsersRef = database.ref(
-          `games/activeUsers/${firebaseAuth.uid}`
+          `game/activeUsers/${firebaseAuth.uid}`
         );
         // hide login or logout buttons depending on if user is authenticated
         logoutBtn.classList.remove("hide");
         loginBtn.classList.add("hide");
         firebaseAuth.loggedIn = true;
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
-        firebaseAuth.hostChecker(firebaseAuth.isHostRef);
         firebaseAuth.insertActiveUser(
           firebaseAuth.userDisplayName,
           firebaseAuth.loggedIn,
           firebaseAuth.timestamp,
           firebaseAuth.isHost
         );
+        firebaseAuth.gameHostCheck();
       } else {
         logoutBtn.classList.add("hide");
         loginBtn.classList.remove("hide");
         firebaseAuth.loggedIn = false;
         firebaseAuth.activeUsersRef = database.ref(
-          `games/activeUsers/${firebaseAuth.uid}`
+          `game/activeUsers/${firebaseAuth.uid}`
         );
         firebaseAuth.activeUsersRef.remove();
       }
@@ -80,17 +82,23 @@ isHostRef: database.ref('games/activeUsers/'),
     };
     firebaseAuth.activeUsersRef.set(postData);
   },
-  removeUser: ref => {
-    ref.remove();
-  },
-  hostChecker: ref => {
-    ref.child("activeUsers").equalTo("true").once("value",snapshot => {
+  userHostChecker: () => {
+    ref
+      .child("activeUsers")
+      .equalTo("true")
+      .once("value", snapshot => {
         if (snapshot.exists()) {
-            firebaseAuth.isHost = false;
+          return false;
         } else {
-            firebaseAuth.isHost = true; 
+          return true;
         }
-    })
+      });
+  },
+  gameHostCheck: () => {
+      firebaseAuth.activeHostRef.once('value')
+      .then(snapshot=>{
+          console.log(`game host check object: ${snapshot.val()}`)
+      })
   }
 };
 
@@ -108,7 +116,6 @@ $("#login").on("click", event => {
 firebaseAuth.AuthStateChanged();
 
 // if ishost = true exists then set ishost = false else isHost = true
-
 
 //every user must have an email
 // firebase.database().ref(`users/${userId}/email`).once("value", snapshot => {
