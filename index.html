@@ -27,20 +27,66 @@
         <div class="nav-wrapper navbar-fixed z-depth-2 green accent-2">
             <a href="#" class="brand-logo center"><i class="fas fa-chalkboard"></i>AYSTAB</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a class="btn waves-effect tooltipped" data-position="bottom" data-tooltip="Sign up as a new user here"
-                        id="login">Login
-                        With Twitter</a></li>
-                <li><a class="btn waves-effect" id="logout">Logout</a></li>
+                <li><a class="btn waves-effect tooltipped modal-trigger" data-position="bottom" data-tooltip="Learn How to Play"
+                        id="game-rules" href="#modal-rules">How
+                        to Play</a></li>
+                <li><a class="btn waves-effect tooltipped modal-trigger" data-position="bottom" data-tooltip="Login to play the game"
+                        href="#modal-login">Login</a></li>
+                <!-- <li><a class="btn waves-effect" id="logout">Logout</a></li> -->
             </ul>
         </div>
     </nav>
+
+    <!-- Modals -->
+    <!-- Rule Modal -->
+    <div id="modal-rules" class="modal">
+        <div class="modal-content">
+            <h3>Welcome</h3>
+            <h4>Rules of the Game</h4>
+            <!-- Todo: Put Rules here -->
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="modal-login" class="modal">
+        <div class="modal-content center-align">
+            <i class="large material-icons">account_circle</i>
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s7 offset-s2">
+                        <i class="small material-icons prefix">email</i>
+                        <label for="icon_email">Email Address</label>
+                        <input id="user-email" type="email" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s7 offset-s2">
+                        <i class="small material-icons prefix">lock</i>
+                        <label for="icon_lock">Password</label>
+                        <input id="user-password" type="text" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <hr class="col s5">
+                    <span class="col s2">or</span>
+                    <hr class="col s5">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="waves-effect waves-green btn-flat">Agree</a>
+        </div>
+    </div>
 
 
     <!-- Game -->
     <div class="row">
         <div class="col s11 m8">
             <div class="card">
-                <div class="card-content z-depth-2 green accent-2 hoverable">
+                <div class="card-content z-depth-3 green accent-2">
 
                     <!-- Question plus anwers -->
                     <ul class="collection with-header">
@@ -72,15 +118,37 @@
             </div>
         </div>
 
+        <!-- Leaders / Score / Chat -->
         <div class="row">
             <div class="col m4">
                 <div class="card">
-                    <div class="card-content z-depth-2 green accent-2"></div>
+                    <div class="card-content z-depth-3 green accent-2">
+                        <ul class="collapsible  expandable">
+                            <li>
+                                <div class="collapsible-header hoverable"><img src="./assets/images/icons/trophy-with-a-star.png">Leaders</div>
+                                <div class="collapsible-body">
+                                    <span id="leaders leader1">1. [Some Name Here]</span>
+                                    <span id="leaders leader2">2. [Some Name Here]</span>
+                                    <span id="leaders leader3">3. [Some Name Here]</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header hoverable"><img src="./assets/images/icons/scoreboard.png">Score</div>
+                                <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header hoverable"><img src="./assets/images/icons/chat-speech-bubbles.png">Chat</div>
+                                <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
+<!-- Scripts -->
 <!-- firebase -->
 <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
 <!-- jQuery CDN -->
@@ -95,5 +163,5 @@
 <script type="module" src="./assets/js/trivia.js"></script>
 <script type="module" src="./assets/js/chat.js"></script>
 <script type="module" src="./assets/js/authorization.js"></script>
-<script type="module" src="./assets/js/ready.js"></script>
+
 </html>
