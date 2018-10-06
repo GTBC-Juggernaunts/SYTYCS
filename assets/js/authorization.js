@@ -30,7 +30,7 @@ export const firebaseAuth = {
   signIn: () => {
     auth
       .signInWithRedirect(provider)
-      .them(result => {
+      .then(result => {
         console.log(result);
       })
       .catch(error => {
@@ -69,6 +69,11 @@ export const firebaseAuth = {
         firebaseAuth.activeUsersRef = database.ref(
           `game/activeUsers/${firebaseAuth.uid}`
         );
+        if(firebaseAuth.isHost){
+          firebaseAuth.gameRef.update({
+            activeHost: false
+          })
+        }
         firebaseAuth.activeUsersRef.remove();
       }
     });
@@ -97,10 +102,39 @@ export const firebaseAuth = {
   gameHostCheck: () => {
       firebaseAuth.activeHostRef.once('value')
       .then(snapshot=>{
-          console.log(`game host check object: ${snapshot.val()}`)
+          console.log(`game host check object: ${snapshot.val()}`);
+        if (snapshot.val() === false) {
+          console.log("looking for new host");
+          database.ref("game/activeUsers/").once('value')
+              .then(usersSnapshot => {
+                let lowestTimestamp = 9999999999999;
+                let newHost = "";
+                usersSnapshot.forEach(user=>{
+                  if (user.val().timestamp < lowestTimestamp){
+                    newHost = user.key;
+                    lowestTimestamp = user.timestamp;
+                  }
+                console.log(`new possible host: ${newHost}`)
+                });
+                console.log(`new host determined: ${newHost}`);
+                if (newHost === firebaseAuth.uid) {
+                  console.log("setting new host");
+                  firebaseAuth.isHost = true;
+                  database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
+                    isHost: true
+                  })
+                      .then(function(){
+                        firebaseAuth.gameRef.update({
+                          activeHost: true
+                        })
+                      })
+                }
+              })
+        }
       })
   }
 };
+
 
 // signs out then authenticated user
 $("#logout").on("click", event => {
