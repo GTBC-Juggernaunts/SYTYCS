@@ -3,8 +3,6 @@ import { firebaseAuth } from "./authorization.js";
 import {auth} from "./authorization.js";
 
 const database = firebase.database();
-// console.log(`below is the database object bruh`);
-// console.log(database);
 
 const userActions = {
   userDisplayName: `${firebaseAuth.userDisplayName}`,
@@ -19,5 +17,4 @@ const userActions = {
     }
   }
 }
-userActions.insertActiveUser();
 
