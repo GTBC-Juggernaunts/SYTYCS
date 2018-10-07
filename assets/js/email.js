@@ -12,7 +12,7 @@ export const mbLayer = {
             url: `${mbLayer.base_url}${mbLayer.check_resource}${mbLayer.key}&email=${usersEmail}`,
             method: 'GET',
             success: (response => {
-                if (response.smtp_check) {
+                if (response.smtp_check && !reponse.role) {
                     mbLayer.validEmail = true;
                 }
                 console.log(mbLayer.validEmail)

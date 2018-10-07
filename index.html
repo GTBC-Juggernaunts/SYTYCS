@@ -51,6 +51,7 @@
     </div>
 
     <!-- Login Modal -->
+    <!-- TODO: Fix the colors  -->
     <div id="modal-login" class="modal">
         <div class="modal-content center-align">
             <i class="large material-icons">account_circle</i>
@@ -74,10 +75,18 @@
                     <span class="col s2">or</span>
                     <hr class="col s5">
                 </div>
+                <!-- TODO: Fix the spacing and sizing -->
+                <div class="row">
+                    <img src="./assets/images/icons/google_login.png" alt="google login button" id="google-login">
+                </div>
+                <div class="row">
+                    <a class="github-button" data-size="large" id="github-login">Sign in with GitHub</a>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
-            <a href="#!" class="waves-effect waves-green btn-flat">Agree</a>
+            <a class="waves-effect waves-green btn-flat" id="auth-sign-in">Sign Up</a>
+            <a class="waves-effect waves-green btn-flat" id="auth-login">Login</a>
         </div>
     </div>
 
@@ -156,6 +165,8 @@
     crossorigin="anonymous"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
 <!-- Support Files -->
 <script type="module" src="./assets/js/firebase.js"></script>
 <script type="module" src="./assets/js/materialize.js"></script>
