@@ -51,6 +51,7 @@
     </div>
 
     <!-- Login Modal -->
+    <!-- TODO: Fix the colors  -->
     <div id="modal-login" class="modal">
         <div class="modal-content center-align">
             <i class="large material-icons">account_circle</i>
@@ -74,17 +75,18 @@
                     <span class="col s2">or</span>
                     <hr class="col s5">
                 </div>
+                <!-- TODO: Fix the spacing and sizing -->
                 <div class="row">
-                    <img src="./assets/images/icons/google_login.png" alt="google login button">
+                    <img src="./assets/images/icons/google_login.png" alt="google login button" id="google-login">
                 </div>
                 <div class="row">
-                    <a class="github-button" data-size="large">Sign in with GitHub</a>
+                    <a class="github-button" data-size="large" id="github-login">Sign in with GitHub</a>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-            <a href="#!" class="waves-effect waves-green btn-flat">Sign Up</a>
-            <a href="#!" class="waves-effect waves-green btn-flat">Login</a>
+            <a class="waves-effect waves-green btn-flat" id="auth-sign-in">Sign Up</a>
+            <a class="waves-effect waves-green btn-flat" id="auth-login">Login</a>
         </div>
     </div>
 
