@@ -24,7 +24,7 @@
 
     <!-- Navbar -->
     <nav>
-        <div class="nav-wrapper navbar-fixed z-depth-2 green accent-2">
+        <div class="nav-wrapper navbar-fixed z-depth-2 amber darken-4">
             <a href="#" class="brand-logo center"><i class="fas fa-chalkboard"></i>AYSTAB</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a class="btn waves-effect tooltipped modal-trigger" data-position="bottom" data-tooltip="Learn How to Play"
@@ -95,7 +95,7 @@
     <div class="row">
         <div class="col s11 m8">
             <div class="card">
-                <div class="card-content z-depth-3 green accent-2">
+                <div class="card-content z-depth-3 amber darken-4">
 
                     <!-- Question plus anwers -->
                     <ul class="collection with-header">
@@ -131,7 +131,7 @@
         <div class="row">
             <div class="col m4">
                 <div class="card">
-                    <div class="card-content z-depth-3 green accent-2">
+                    <div class="card-content z-depth-3 amber darken-4">
                         <ul class="collapsible  expandable">
                             <li>
                                 <div class="collapsible-header hoverable"><img src="./assets/images/icons/trophy-with-a-star.png">Leaders</div>
@@ -143,11 +143,24 @@
                             </li>
                             <li>
                                 <div class="collapsible-header hoverable"><img src="./assets/images/icons/scoreboard.png">Score</div>
-                                <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                                <div class="collapsible-body">
+                                    <h4>Your Points</h4>
+                                    <h5 id="player-points"></h5>
+                                </div>
                             </li>
                             <li>
                                 <div class="collapsible-header hoverable"><img src="./assets/images/icons/chat-speech-bubbles.png">Chat</div>
-                                <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                                <div class="collapsible-body">
+                                    <div class='z-depth-1' id='trash-talk-chat'></div>
+                                    <div class="row">
+                                        <div>
+                                            <input type="text" placeholder="Say Something ...">
+                                        </div>
+                                        <div>
+                                            <button class="btn waves-effect" id='talk-trash'><i class='material-icons left'>send</i>Talk Trash</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </li>
                         </ul>
                     </div>
