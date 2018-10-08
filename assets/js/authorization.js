@@ -1,5 +1,9 @@
-import { config } from "./firebase.js";
-import { triviaAPI } from "./trivia.js";
+import {
+  config
+} from "./firebase.js";
+import {
+  triviaAPI
+} from "./trivia.js";
 
 // create instance of Google provider object
 export const auth = firebase.auth();
@@ -10,7 +14,7 @@ const database = firebase.database();
 // grab login and logout buttons
 const loginBtn = document.getElementById("loginModalBtn");
 
-// database object
+// Auth object
 export const firebaseAuth = {
   gameRef: database.ref("game/"),
   activeHostRef: database.ref("game/activeHost"),
@@ -24,6 +28,9 @@ export const firebaseAuth = {
   signOut: () => {
     auth.signOut();
   },
+
+  // Methods
+  //Sign in Existin User
   signInExistingUser: () => {
     let email = $("#user-email").val();
     let password = $("#user-password").val();
@@ -32,6 +39,8 @@ export const firebaseAuth = {
       console.log(email);
     });
   },
+
+  // Create a new user for the site
   createUser: () => {
     let email = $("#user-email").val();
     let password = $("#user-password").val();
@@ -40,10 +49,13 @@ export const firebaseAuth = {
       console.log(email);
     });
   },
+
+  // Sign in with a federated model
   signIn: authProvider => {
+    console.log(`Supposed to sign in`)
     auth
       .setPersistence(firebase.auth.Auth.Persistence.SESSION)
-      .then(function() {
+      .then(function () {
         return auth.signInWithRedirect(authProvider).then(result => {
           console.log(result);
           console.log(email);
@@ -51,6 +63,8 @@ export const firebaseAuth = {
       })
       .catch(error => {});
   },
+
+  //Check for auth state to change - Logging out of a federated model
   AuthStateChanged: () => {
     auth.onAuthStateChanged(firebaseUser => {
       if (firebaseUser) {
@@ -99,6 +113,8 @@ export const firebaseAuth = {
       }
     });
   },
+
+  // Insert active user to the DV
   insertActiveUser: (displayName, loggedIn, timestamp, isHost) => {
     const postData = {
       displayName,
@@ -108,6 +124,8 @@ export const firebaseAuth = {
     };
     firebaseAuth.activeUsersRef.set(postData);
   },
+
+  // Check for which players will be the host
   gameHostCheck: () => {
     firebaseAuth.activeHostRef.once("value").then(snapshot => {
       console.log(`game host check object: ${snapshot.val()}`);
@@ -135,7 +153,7 @@ export const firebaseAuth = {
                 .update({
                   isHost: true
                 })
-                .then(function() {
+                .then(function () {
                   firebaseAuth.gameRef.update({
                     activeHost: true
                   });
@@ -145,14 +163,18 @@ export const firebaseAuth = {
       }
     });
   },
-  hostListener: function() {
-    database.ref("game/activeUsers").on("child_removed", function(data) {
+
+  // Constantly check for a host when someone leaves the game
+  hostListener: function () {
+    database.ref("game/activeUsers").on("child_removed", function (data) {
       firebaseAuth.gameHostCheck();
       if (firebaseAuth.isHost) {
         triviaAPI.questionReturn();
       }
     });
   },
+
+  // Change login button to logout
   swapLoginBtn: status => {
     if (status) {
       $("#loginModalBtn")
@@ -168,6 +190,7 @@ export const firebaseAuth = {
   }
 };
 
+// LOGIN LISTENERS
 //signs up new user
 $("#auth-sign-in").on("click", event => {
   firebaseAuth.createUser();
@@ -190,6 +213,7 @@ $("#google-login").on("click", event => {
 
 // Sign in through github
 $("#github-login").on("click", event => {
+  console.log(`Ive been clicked`)
   firebaseAuth.signIn(githubAuthProvider);
 });
 
