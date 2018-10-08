@@ -3,12 +3,12 @@ import { triviaAPI } from "./trivia.js";
 
 // create instance of Google provider object
 export const auth = firebase.auth();
-const provider = new firebase.auth.GoogleAuthProvider();
+const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+const githubAuthProvider = new firebase.auth.GithubAuthProvider();
 const database = firebase.database();
 
 // grab login and logout buttons
-const logoutBtn = document.getElementById("logout");
-const loginBtn = document.getElementById("login");
+const loginBtn = document.getElementById("loginModalBtn");
 
 // database object
 export const firebaseAuth = {
@@ -24,17 +24,32 @@ export const firebaseAuth = {
   signOut: () => {
     auth.signOut();
   },
-  signIn: () => {
+  signInExistingUser: () => {
+    let email = $("#user-email").val();
+    let password = $("#user-password").val();
+    auth.signInWithEmailAndPassword(email, password).catch(error => {
+      console.log(error);
+      console.log(email);
+    });
+  },
+  createUser: () => {
+    let email = $("#user-email").val();
+    let password = $("#user-password").val();
+    auth.createUserWithEmailAndPassword(email, password).catch(error => {
+      console.log(error);
+      console.log(email);
+    });
+  },
+  signIn: authProvider => {
     auth
       .setPersistence(firebase.auth.Auth.Persistence.SESSION)
       .then(function() {
-        return auth.signInWithRedirect(provider).then(result => {
+        return auth.signInWithRedirect(authProvider).then(result => {
           console.log(result);
+          console.log(email);
         });
       })
-      .catch(error => {
-        console.log(error);
-      });
+      .catch(error => {});
   },
   AuthStateChanged: () => {
     auth.onAuthStateChanged(firebaseUser => {
@@ -43,16 +58,20 @@ export const firebaseAuth = {
         console.log(firebaseUser);
         // grab display name
         firebaseAuth.userDisplayName = firebaseUser.displayName;
+        if (firebaseUser.displayName !== null) {
+          firebaseAuth.userDisplayName = firebaseUser.displayName;
+        } else {
+          firebaseAuth.userDisplayName = firebaseUser.email;
+        }
         // grab unique user id
         firebaseAuth.uid = firebaseUser.uid;
         // create unique ref under activeUsers with the uid
         firebaseAuth.activeUsersRef = database.ref(
           `game/activeUsers/${firebaseAuth.uid}`
         );
-        // hide login or logout buttons depending on if user is authenticated
-        // logoutBtn.classList.remove("hide");
-        // loginBtn.classList.add("hide");
         firebaseAuth.loggedIn = true;
+        // hide login or logout buttons depending on if user is authenticated
+        firebaseAuth.swapLoginBtn(firebaseAuth.loggedIn);
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
         firebaseAuth.insertActiveUser(
           firebaseAuth.userDisplayName,
@@ -64,9 +83,8 @@ export const firebaseAuth = {
         // disconnect logic here
         firebaseAuth.activeUsersRef.onDisconnect().remove();
       } else {
-        // logoutBtn.classList.add("hide");
-        // loginBtn.classList.remove("hide");
         firebaseAuth.loggedIn = false;
+        firebaseAuth.swapLoginBtn(firebaseAuth.loggedIn);
         console.log(`firebase uid: ${firebaseAuth.uid}`);
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
         firebaseAuth.activeUsersRef = database.ref(
@@ -134,15 +152,46 @@ export const firebaseAuth = {
         triviaAPI.questionReturn();
       }
     });
+  },
+  swapLoginBtn: status => {
+    if (status) {
+      $("#loginModalBtn")
+        .attr("data-tooltip", "Logout Game")
+        .text("Logout");
+      loginBtn.classList.remove("modal-trigger");
+    } else {
+      $("#loginModalBtn")
+        .attr("data-tooltip", "Login to play the game")
+        .text("Login");
+      loginBtn.classList.add("modal-trigger");
+    }
   }
 };
+
+//signs up new user
+$("#auth-sign-in").on("click", event => {
+  firebaseAuth.createUser();
+});
+
+//signs in existing user
+$("#auth-login").on("click", event => {
+  firebaseAuth.signInExistingUser();
+});
 
 // signs out then authenticated user
 $(".logout").on("click", event => {
   firebaseAuth.signOut();
 });
 
-// Sign in through twitter
-$("#login").on("click", event => {
-  firebaseAuth.signIn();
+// Sign in through google
+$("#google-login").on("click", event => {
+  firebaseAuth.signIn(googleAuthProvider);
 });
+
+// Sign in through github
+$("#github-login").on("click", event => {
+  firebaseAuth.signIn(githubAuthProvider);
+});
+
+// listener for authentication state change
+firebaseAuth.AuthStateChanged();
