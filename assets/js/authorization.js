@@ -8,12 +8,7 @@ const githubAuthProvider = new firebase.auth.GithubAuthProvider();
 const database = firebase.database();
 
 // grab login and logout buttons
-const logoutBtn = document.getElementById("logout");
 const loginBtn = document.getElementById("loginModalBtn");
-
-//grab username and password input
-// const userEmail = $("#user-email").val();
-// const userPassword = $("#user-password").val();
 
 // database object
 export const firebaseAuth = {
@@ -28,6 +23,14 @@ export const firebaseAuth = {
   timestamp: Date.now(),
   signOut: () => {
     auth.signOut();
+  },
+  signInExistingUser: () => {
+    let email = $("#user-email").val();
+    let password = $("#user-password").val();
+    auth.signInWithEmailAndPassword(email, password).catch(error => {
+      console.log(error);
+      console.log(email);
+    });
   },
   createUser: () => {
     let email = $("#user-email").val();
@@ -160,6 +163,7 @@ export const firebaseAuth = {
       $("#loginModalBtn")
         .attr("data-tooltip", "Login to play the game")
         .text("Login");
+      loginBtn.classList.add("modal-trigger");
     }
   }
 };
@@ -169,10 +173,14 @@ $("#auth-sign-in").on("click", event => {
   firebaseAuth.createUser();
 });
 
+//signs in existing user
+$("#auth-login").on("click", event => {
+  firebaseAuth.signInExistingUser();
+});
+
 // signs out then authenticated user
 $(".logout").on("click", event => {
   firebaseAuth.signOut();
-  loginBtn.classList.add("modal-trigger");
 });
 
 // Sign in through google
@@ -185,4 +193,5 @@ $("#github-login").on("click", event => {
   firebaseAuth.signIn(githubAuthProvider);
 });
 
+// listener for authentication state change
 firebaseAuth.AuthStateChanged();
