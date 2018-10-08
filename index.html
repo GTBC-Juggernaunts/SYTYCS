@@ -10,11 +10,13 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
-        crossorigin="anonymous">
+    crossorigin="anonymous">
     <!-- Reset CSS -->
     <link rel="stylesheet" href="./assets/css/reset.css">
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Toasters -->
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css'/>
     <!-- Style File -->
     <link rel="stylesheet" href="./assets/css/style.css">
 
@@ -151,13 +153,13 @@
                             <li>
                                 <div class="collapsible-header hoverable"><img src="./assets/images/icons/chat-speech-bubbles.png">Chat</div>
                                 <div class="collapsible-body">
-                                    <div class='z-depth-1' id='trash-talk-chat'></div>
+                                    <div class='trash-talk-chat z-depth-1'></div>
                                     <div class="row">
                                         <div>
-                                            <input type="text" placeholder="Say Something ...">
+                                            <input id="trash-talk-message" type="text" placeholder="Say Something ...">
                                         </div>
                                         <div>
-                                            <button class="btn waves-effect" id='talk-trash'><i class='material-icons left'>send</i>Talk Trash</button>
+                                            <button class="btn waves-effect" id='trash-talk'><i class='material-icons left'>send</i>Talk Trash</button>
                                         </div>
                                     </div>
                                 </div>
@@ -180,6 +182,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Toast -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js'></script>
 <!-- Support Files -->
 <script type="module" src="./assets/js/firebase.js"></script>
 <script type="module" src="./assets/js/materialize.js"></script>
