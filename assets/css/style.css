@@ -51,11 +51,12 @@
 }
 
 /* Chat */
-#trash-talk-chat {
+.trash-talk-chat {
   border: .1px solid lightgray;
   height: 200px;
   text-align: left;
   padding: 10px 4px;
+  overflow: hidden;
 }
 
 .chat {
