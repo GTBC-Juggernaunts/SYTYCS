@@ -12,13 +12,16 @@ $(document).ready(function() {
   firebaseAuth.hostListener();
 
   //Temporary listener for if user is host to start game
-  if(firebaseAuth.isHost){
-    triviaAPI.questionReturn();
-  }
+  console.log(`checking firebaseAuth isHost: ${firebaseAuth.isHost}`);
+  // if(firebaseAuth.isHost){
+  //   triviaAPI.questionReturn();
+  // }
+
+  triviaAPI.questionReturn();
 
   //Listener for question changes
-  database.ref("game/").on('value', snapshot => {
-    triviaAPI.onQuestionChange(snapshot.val())
-  });
+  // database.ref("game/QandAs/").on('value', snapshot => {
+  //   triviaAPI.onQuestionChange(snapshot.val())
+  // });
 
 });

@@ -45,7 +45,7 @@ export const triviaAPI = {
   // },
 
   hostPushQuestion: function(question, answers) {
-    database.ref("game/").set({
+    database.ref("game/QandAs/").set({
       question,
       answers
     });
