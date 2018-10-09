@@ -196,8 +196,8 @@ export const firebaseAuth = {
 
 // LOGIN LISTENERS
 //signs up new user
-$("#auth-sign-in").on("click", event => {
-  mbLayer.validateEmail();
+$("#auth-sign-up").on("click", event => {
+  mbLayer.validateEmail()
 });
 
 //signs in existing user

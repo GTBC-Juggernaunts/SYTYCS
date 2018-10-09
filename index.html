@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AYSTAB ™</title>
+    <title>Trivia Royale ™</title>
     <!-- Material Icon CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Bangers:regular" rel="stylesheet" />
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
         crossorigin="anonymous">
@@ -27,14 +28,13 @@
     <!-- Navbar -->
     <nav>
         <div class="nav-wrapper navbar-fixed z-depth-2 amber darken-4">
-            <a href="#" class="brand-logo center"><i class="fas fa-chalkboard"></i>AYSTAB</a>
+            <a href="#" class="brand-logo center">Trivia Royale</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a class="btn waves-effect tooltipped modal-trigger" data-position="bottom" data-tooltip="Learn How to Play"
                         id="game-rules" href="#modal-rules">How
                         to Play</a></li>
                 <li><a class="btn waves-effect tooltipped modal-trigger logout" id="loginModalBtn" data-position="bottom"
                         data-tooltip="Login to play the game" href="#modal-login">Login</a></li>
-                <!-- <li><a class="btn waves-effect" id="logout">Logout</a></li> -->
             </ul>
         </div>
     </nav>
@@ -42,13 +42,21 @@
     <!-- Modals -->
     <!-- Rule Modal -->
     <div id="modal-rules" class="modal">
-        <div class="modal-content">
+        <div class="modal-content rules">
             <h3>Welcome</h3>
             <h4>Rules of the Game</h4>
+            <hr>
+            <ol>
+                <li>1. Users must login to the game in order to play</li>
+                <li>2. There needs to be at least 3 players connected in order to start the game</li>
+                <li>3. There will be 10 rounds of random questions</li>
+                <li>4. Leaders will display as the match is in progress</li>
+                <li>5. Have Fun!</li>
+            </ol>
             <!-- Todo: Put Rules here -->
         </div>
         <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+            <a href="#!" class="modal-close waves-effect btn-flat">Agree</a>
         </div>
     </div>
 
@@ -56,18 +64,18 @@
     <!-- TODO: Fix the colors  -->
     <div id="modal-login" class="modal">
         <div class="modal-content center-align">
-            <i class="large material-icons">account_circle</i>
+            <img src="./assets/images/icons/users.png" alt="icon for users">
             <form class="col s12">
                 <div class="row">
                     <div class="input-field col s7 offset-s2">
-                        <i class="small material-icons prefix">email</i>
+                        <img src="./assets/images/icons/email.png" alt="icon for email" class='prefix'>
                         <label for="icon_email">Email Address</label>
                         <input id="user-email" type="email" class="validate">
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s7 offset-s2">
-                        <i class="small material-icons prefix">lock</i>
+                        <img src="./assets/images/icons/lock.png" alt="icon for password" class="prefix">
                         <label for="icon_lock">Password</label>
                         <input id="user-password" type="text" class="validate">
                     </div>
@@ -87,8 +95,8 @@
             </form>
         </div>
         <div class="modal-footer">
-            <a class="waves-effect waves-green btn-flat modal-close" id="auth-sign-in">Sign Up</a>
-            <a class="waves-effect waves-green btn-flat modal-close" id="auth-login">Login</a>
+            <a class="waves-effect btn-flat modal-close" id="auth-sign-up">Sign Up</a>
+            <a class="waves-effect btn-flat modal-close" id="auth-login">Login</a>
         </div>
     </div>
 
@@ -159,7 +167,7 @@
                                             <input id="trash-talk-message" type="text" placeholder="Say Something ...">
                                         </div>
                                         <div>
-                                            <button class="btn waves-effect" id='trash-talk'><i class='material-icons left'>send</i>Talk
+                                            <button class="btn waves-effect" id='trash-talk'>Talk
                                                 Trash</button>
                                         </div>
                                     </div>
@@ -181,18 +189,19 @@
     crossorigin="anonymous"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<!-- Place this tag in your head or just before your close body tag. -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
 <!-- Toast -->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js'></script>
 <!-- Support Files -->
 <script type="module" src="./assets/js/firebase.js"></script>
-<script type="module" src="./assets/js/materialize.js"></script>
 <script type="module" src="./assets/js/opentb.js"></script>
 <script type="module" src="./assets/js/trivia.js"></script>
 <script type="module" src="./assets/js/chat.js"></script>
 <script type="module" src="./assets/js/authorization.js"></script>
 <script type="module" src="./assets/js/email.js"></script>
+<<<<<<< HEAD
 <script type="module" src="./assets/js/leaderboard.js"></script>
+=======
+<script type='module' src="/assets/js/ready.js"></script>
+>>>>>>> bce68aab6041653fd9695ea7356561efcc032d49
 
 </html>

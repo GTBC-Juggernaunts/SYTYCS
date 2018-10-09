@@ -1,3 +1,27 @@
+html, body {
+  height: 100%;
+  background: black;
+}
+
+* {
+  font-family: 'Bangers', cursive !important;
+}
+
+body {
+  background-color: black;
+  /* background-image: url('../images/icons/halloween.gif');
+  background-size: cover; */
+}
+
+.btn {
+  background-color: #3F88C5;
+  font-size: 18px;
+}
+
+.btn:hover {
+  background-color: #3F88C5;
+}
+
 /* Page Rules */
 .row {
   margin: 50px auto;
@@ -11,6 +35,16 @@
 
 .modal-content .row {
   margin: 0 auto;
+}
+
+/* Rule List */
+.rules > ol {
+  font-size: 26px;
+  text-align: left;
+}
+
+ol > li {
+  margin-bottom: 20px;
 }
 
 /* Federated Login */
