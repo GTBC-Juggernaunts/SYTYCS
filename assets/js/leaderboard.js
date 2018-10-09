@@ -4,61 +4,71 @@ import { auth } from "./authorization.js";
 import { triviaAPI } from "./trivia.js";
 
 const database = firebase.database();
-console.log("leaderboard js is here...");
 firebaseAuth.AuthStateChanged();
 // triviaAPI.questionReturn();
 
 const leaderRef = database.ref(`/game/activeUsers/`);
 
+let userArr = [{ name: "peter", score: 10 }, { name: "mario", score: 1000 }];
+
+userArr.push({ name: "joseph", score: 1 });
+console.log(userArr);
+
+// listener for when user logins
 leaderRef.on("child_added", snapshot => {
   let displayName = snapshot.val().displayName;
   let userPoints = snapshot.val().userPoints;
-  userArrayManage(displayName);
-  console.log(`username child add: ${name}`);
-  console.log(`arr: ${userArr}`);
+  if (!isUserExist(userArr, displayName)) {
+    userArr.push({ name: displayName, score: userPoints });
+  }
+  console.log(`username child add: ${displayName}`);
+  console.log(userArr);
 });
 
+// listener for when user logouts
 leaderRef.on("child_removed", snapshot => {
   let displayName = snapshot.val().displayName;
   let displayPoints = snapshot.val().userPoints;
-  userArrayManage(displayName, displayPoints);
-  console.log(`username child removed: ${name}`);
+  userArr = removeUser(userArr, displayName);
+  console.log(`username child removed: ${displayName}`);
   console.log(`arr: ${userArr}`);
 });
-
-let userArr = [];
-let userArrayManage = name => {
-  let index = userArr.indexOf(name);
-  if (index !== -1) {
-    userArr.splice(index, 1);
-    displayLeader(userArr);
-  } else {
-    userArr.push(name);
-    displayLeader(userArr);
-  }
-};
-
-function displayLeader(users, points) {
-  if (userArr.length > 3) {
-    $("#leader0").html(`<h6>1st: ${users[0]} - ${points} points</h6>`);
-    $("#leader1").html(`<h6>2nd: ${users[1]} - ${points} points</h6>`);
-    $("#leader2").html(`<h6>3rd: ${users[2]} - ${poitns} points</h6>`);
-  } else {
-    $("#leader0").html(`<h6>Waiting For More Players To Join</h6>`);
-  }
+function isUserExist(arr, name) {
+  // if one user in the array has the same name as the argument passed in it returns true otherwise return false
+  return arr.some(user => user.name === name);
+}
+function removeUser(arr, name) {
+  // if the name being passed in as an argument doesn't exist int he userArr then add it
+  return arr.filter(user => user.name !== name);
 }
 
-// var userMap = new Map();
-// userMap.set(0, "zero");
-// userMap.set(1, "one");
-// for (var [key, value] of userMap) {
-//   console.log(key + " = " + value);
-//   console.log(userMap);
-//   console.log(key);
-//   console.log(value);
-// }
-// 0 = zero
-// 1 = one
+// function to sort players
+userArr.sort(function(a, b) {
+  if (a.score < b.score) {
+    return -1;
+    console.log(userArr);
+  }
+  if (a.score > b.score) {
+    return 1;
+    console.log(userArr);
+  }
+  // scores must be equal
+  return 0;
+  console.log(userArr);
+});
+
+// displays leaders to the dom
+function displayLeader(users, points) {
+  if (userArr.length >= 3) {
+    $("#leader0").html(`<h6>1st: ${users[0]} - ${points} points</h6>`);
+    $("#leader1").html(`<h6>2nd: ${users[1]} - ${points} points</h6>`);
+    $("#leader2").html(`<h6>3rd: ${users[2]} - ${points} points</h6>`);
+    console.log(userArr.length);
+  } else {
+    $("#leader0").html(`<h6>Waiting For More Players To Join</h6>`);
+    console.log(userArr.length);
+  }
+}
 
 // users gets added to array
 // array gets displayed on DOM in list
