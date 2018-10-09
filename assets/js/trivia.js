@@ -3,7 +3,9 @@
 //=====================================================================================================================
 
 import { firebaseAuth } from "./authorization.js";
+import { config } from "./firebase.js";
 
+const database = firebase.database();
 //=====================================================================================================================
 //Trivia API and all related methods
 //=====================================================================================================================
@@ -24,13 +26,30 @@ export const triviaAPI = {
       results.incorrect_answers.forEach(answer => {
         answers.push(atob(answer));
       });
-      game.currentQStatus = "Active";
-      game.correctAnswer = (results.correct_answer);
       triviaAPI.shuffle(answers);
-      console.log(`correct answer: ${results.correct_answer}`);
-      game.displayQ(atob(results.question), answers);
-      game.startTimer();
+      //answers now stored in random order inside 'answers' array on host computer
+      console.log("pushing question");
+      triviaAPI.hostPushQuestion(results.question, answers)
     });
+  },
+  onQuestionChange: function(snapshot){
+    game.currentQStatus = "Active";
+    console.log(snapshot);
+  },
+
+
+      // game.correctAnswer = (results.correct_answer);
+      // game.displayQ(atob(results.question), answers);
+      // game.startTimer();
+  //   });
+  // },
+
+  hostPushQuestion: function(question, answers) {
+    database.ref("game/").set({
+      question,
+      answers
+    });
+    console.log("question pushed")
   },
 
   //Stolen shamelessly from stack overflow @ https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
