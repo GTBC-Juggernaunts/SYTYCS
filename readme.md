@@ -51,4 +51,4 @@
 
 ### Attributions / Credits
 
-Icon made by Freepik,Yannick,Mavadee from www.flaticon.com
+Icons made by Freepik, OCHA, Those Icons, Yannick, Mavadee from www.flaticon.com

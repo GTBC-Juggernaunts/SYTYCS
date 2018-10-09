@@ -16,11 +16,12 @@ export const mbLayer = {
                 if (response.smtp_check === true && response.role === false) {
                     firebaseAuth.createUser()
                 }
-                console.log(response)
+                else {
+                    // TODO: meaningful error message
+                }
             }),
             error: (error => {
-                // TODO meaningful error message
-                console.log(error)
+                console.log(`error`)
             })
         })
     }
