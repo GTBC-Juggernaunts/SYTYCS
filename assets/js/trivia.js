@@ -19,7 +19,7 @@ export const triviaAPI = {
       url: triviaAPI.queryUrl,
       method: "GET"
     }).then(response => {
-      console.log(response);
+      console.log("host question received");
       let answers = [];
       let results = response.results[0];
       answers.push(atob(results.correct_answer));
@@ -29,27 +29,27 @@ export const triviaAPI = {
       triviaAPI.shuffle(answers);
       //answers now stored in random order inside 'answers' array on host computer
       console.log("pushing question");
-      triviaAPI.hostPushQuestion(results.question, answers)
+      game.currentQ += 1;
+      triviaAPI.hostPushQuestion(results.question, answers, results.correct_answer, game.currentQ)
     });
   },
-  onQuestionChange: function(snapshot){
+  onQuestionChange: function(question, answers, correctAnswer){
+    game.displayQ(atob(question), answers);
     game.currentQStatus = "Active";
-    console.log(snapshot);
+    game.correctAnswer = correctAnswer;
+    game.startTimer();
   },
 
-
-      // game.correctAnswer = (results.correct_answer);
-      // game.displayQ(atob(results.question), answers);
-      // game.startTimer();
-  //   });
-  // },
-
-  hostPushQuestion: function(question, answers) {
-    database.ref("game/QandAs/").set({
-      question,
-      answers
+  hostPushQuestion: function(question, answers, correctAnswer, currentQ) {
+    database.ref("game/").update({
+      currentQ,
     });
-    console.log("question pushed")
+    database.ref("game/QandAs/").update({
+      question,
+      answers,
+      correctAnswer
+    });
+    console.log(`question ${game.currentQ} pushed`)
   },
 
   //Stolen shamelessly from stack overflow @ https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
@@ -83,6 +83,13 @@ export const game = {
   correctAnswer: "",
   selectedAnswer: "",
   selectionTimer: 0, //masking name of variable so people don't immediately change it
+  currentQ: 1,
+
+  startGame: function() {
+    game.currentQ = 0;
+
+  },
+
   displayQ: function(question, answers) {
     $("#question").html(`<h4>${question}</h4>`);
     $("#answer1").text(answers[0]);
@@ -124,15 +131,25 @@ export const game = {
     if (game.selectedAnswer === atob(game.correctAnswer)) {
       console.log(`Correct!`);
       game.userPoints += game.selectionTimer;
+      database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
+        points: game.userPoints
+      });
       console.log(game.userPoints);
       game.currentQStatus = "Inactive";
     } else {
       game.currentQStatus = "Inactive";
       console.log(`Correct Answer: ${atob(game.correctAnswer)}`);
     }
-    if (firebaseAuth.isHost === true) {
+    if (firebaseAuth.isHost === true && game.currentQ < 10) {
       setTimeout(triviaAPI.questionReturn, 3000);
     }
+    else if (firebaseAuth.isHost === true && game.currentQ >= 10) {
+      game.endGame();
+    }
+  },
+
+  endGame: function() {
+    //TODO figure out end game shit
   },
 
   unselector: function() {
@@ -159,9 +176,6 @@ export const game = {
 //Game Runtime
 //=====================================================================================================================
 
-if(firebaseAuth.isHost === true){
-  triviaAPI.questionReturn();
-}
 $(".answer").click(event => {
   game.onClick($(event));
 });
