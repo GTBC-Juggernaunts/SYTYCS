@@ -2,16 +2,20 @@
 //Import Modules
 //=====================================================================================================================
 
-import { firebaseAuth } from "./authorization.js";
+import {
+  firebaseAuth
+} from "./authorization.js";
 
 //=====================================================================================================================
 //Trivia API and all related methods
 //=====================================================================================================================
 
 export const triviaAPI = {
-  queryUrl:
-    "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=base64",
-  questionReturn: function() {
+  queryUrl: "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=base64",
+
+  // Grab Questions from the API
+  // Unselect any anuwer that may have been selected for the given round
+  questionReturn: function () {
     game.unselector();
     $.ajax({
       url: triviaAPI.queryUrl,
@@ -34,7 +38,7 @@ export const triviaAPI = {
   },
 
   //Stolen shamelessly from stack overflow @ https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-  shuffle: function(a) {
+  shuffle: function (a) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
       j = Math.floor(Math.random() * (i + 1));
@@ -51,6 +55,8 @@ export const triviaAPI = {
 //Game Methods
 //=====================================================================================================================
 
+
+// Game object
 export const game = {
   userId: "",
   sessionId: "",
@@ -64,7 +70,10 @@ export const game = {
   correctAnswer: "",
   selectedAnswer: "",
   selectionTimer: 0, //masking name of variable so people don't immediately change it
-  displayQ: function(question, answers) {
+
+  // Methods
+  // Display the Questions
+  displayQ: function (question, answers) {
     $("#question").html(`<h4>${question}</h4>`);
     $("#answer1").text(answers[0]);
     $("#answer2").text(answers[1]);
@@ -72,13 +81,15 @@ export const game = {
     $("#answer4").text(answers[3]);
   },
 
-  decrementPoints: function() {
+  // Decrease points in game and reflect in progress bar
+  decrementPoints: function () {
     game.points -= 1;
     $("#progress-bar-value").text(`${game.points}pts`);
-    $("#progress-bar-value").css("width",(1000-game.points)/10 + '%')
+    $("#progress-bar-value").css("width", (1000 - game.points) / 10 + '%')
   },
 
-  decrementQ: function() {
+  // Decrease question timer
+  decrementQ: function () {
     game.questionTimer -= 1;
     if (game.questionTimer === 0) {
       game.points = 1;
@@ -87,7 +98,8 @@ export const game = {
     }
   },
 
-  startTimer: function() {
+  // Start timer for a given question
+  startTimer: function () {
     game.questionTimer = 10;
     game.points = 1000;
     game.questionIntervalId = setInterval(game.decrementQ, 1000);
@@ -95,7 +107,8 @@ export const game = {
     $("#progress-bar-value").text('1000pts')
   },
 
-  endQuestion: function() {
+  // Assign player points and clear Q&A block for next question
+  endQuestion: function () {
     game.currentQStatus = "Inactive";
     clearInterval(game.questionIntervalId);
     clearInterval(game.intervalId);
@@ -116,18 +129,19 @@ export const game = {
     }
   },
 
-  unselector: function() {
+  //  Unselect any answer from the board
+  unselector: function () {
     let collections = $(".answer");
-    for(let i = 0; i < collections.length; i++) {
+    for (let i = 0; i < collections.length; i++) {
       $(collections[i]).parent().removeClass('active');
     }
   },
 
-  onClick: function(event) {
-    if(game.currentQStatus === "Inactive"){
+  // Determine which answer a user selected and if within the window of an active question
+  onClick: function (event) {
+    if (game.currentQStatus === "Inactive") {
       console.log("Question not active.")
-    }
-    else {
+    } else {
       game.unselector();
       game.selectedAnswer = event[0].target.innerText;
       game.selectionTimer = game.points;
@@ -140,7 +154,7 @@ export const game = {
 //Game Runtime
 //=====================================================================================================================
 
-if(firebaseAuth.isHost === true){
+if (firebaseAuth.isHost === true) {
   triviaAPI.questionReturn();
 }
 $(".answer").click(event => {
