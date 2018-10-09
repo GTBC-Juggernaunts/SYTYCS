@@ -10,13 +10,13 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
-    crossorigin="anonymous">
+        crossorigin="anonymous">
     <!-- Reset CSS -->
     <link rel="stylesheet" href="./assets/css/reset.css">
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!-- Toasters -->
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css'/>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css' />
     <!-- Style File -->
     <link rel="stylesheet" href="./assets/css/style.css">
 
@@ -32,8 +32,8 @@
                 <li><a class="btn waves-effect tooltipped modal-trigger" data-position="bottom" data-tooltip="Learn How to Play"
                         id="game-rules" href="#modal-rules">How
                         to Play</a></li>
-                <li><a class="btn waves-effect tooltipped modal-trigger logout" id="loginModalBtn" data-position="bottom" data-tooltip="Login to play the game"
-                        href="#modal-login">Login</a></li>
+                <li><a class="btn waves-effect tooltipped modal-trigger logout" id="loginModalBtn" data-position="bottom"
+                        data-tooltip="Login to play the game" href="#modal-login">Login</a></li>
                 <!-- <li><a class="btn waves-effect" id="logout">Logout</a></li> -->
             </ul>
         </div>
@@ -78,11 +78,11 @@
                     <hr class="col s5">
                 </div>
                 <!-- TODO: Fix the spacing and sizing -->
-                <div class="row">
-                    <img src="./assets/images/icons/google_login.png" alt="google login button" id="google-login">
-                </div>
-                <div class="row">
-                    <a class="github-button" data-size="large" id="github-login">Sign in with GitHub</a>
+                <div class="federated-logins">
+                    <div class="row">
+                        <img class="hoverable" src="./assets/images/icons/google_login.png" alt="google login button"
+                            id="google-login">
+                    </div>
                 </div>
             </form>
         </div>
@@ -91,7 +91,7 @@
             <a class="waves-effect waves-green btn-flat modal-close" id="auth-login">Login</a>
         </div>
     </div>
- 
+
 
     <!-- Game -->
     <div class="row">
@@ -159,7 +159,8 @@
                                             <input id="trash-talk-message" type="text" placeholder="Say Something ...">
                                         </div>
                                         <div>
-                                            <button class="btn waves-effect" id='trash-talk'><i class='material-icons left'>send</i>Talk Trash</button>
+                                            <button class="btn waves-effect" id='trash-talk'><i class='material-icons left'>send</i>Talk
+                                                Trash</button>
                                         </div>
                                     </div>
                                 </div>

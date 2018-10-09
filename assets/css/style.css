@@ -13,6 +13,21 @@
   margin: 0 auto;
 }
 
+/* Federated Login */
+.federated-logins {
+  margin-top: 20px;
+}
+
+.federated-logins button {
+  height: 35px;;
+  width: 185px;
+  margin: 15px auto;
+  font-weight: 400;
+  /* color: slategrey */
+  border: none;
+  background: #fff;
+}
+
 /* Game Baord */
 .card-content > * {
   text-align: center;
