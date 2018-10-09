@@ -1,21 +1,21 @@
-// Mailbox API Object
+import { firebaseAuth } from "./authorization.js";
 'use strict';
 
+// Mailbox API Object
 export const mbLayer = {
     base_url: 'https://apilayer.net/api/',
     check_resource: 'check',
     key: '?access_key=5f6cbe1b6f7541e55af21cee645431df',
-    validEmail: false,
 
-    validateEmail: (usersEmail) => {
+    validateEmail: () => {
+        let usersEmail = $("#user-email").val().trim();
         $.ajax({
             url: `${mbLayer.base_url}${mbLayer.check_resource}${mbLayer.key}&email=${usersEmail}`,
             method: 'GET',
             success: (response => {
-                if (response.smtp_check && !reponse.role) {
-                    mbLayer.validEmail = true;
+                if (response.smtp_check === true && response.role === false) {
+                    firebaseAuth.createUser()
                 }
-                console.log(mbLayer.validEmail)
                 console.log(response)
             }),
             error: (error => {

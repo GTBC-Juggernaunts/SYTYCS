@@ -4,6 +4,7 @@ import {
 import {
   triviaAPI
 } from "./trivia.js";
+import { mbLayer } from "./email.js";
 
 // create instance of Google provider object
 export const auth = firebase.auth();
@@ -32,8 +33,8 @@ export const firebaseAuth = {
   // Methods
   //Sign in Existin User
   signInExistingUser: () => {
-    let email = $("#user-email").val();
-    let password = $("#user-password").val();
+    let email = $("#user-email").val().trim();
+    let password = $("#user-password").val().trim();
     auth.signInWithEmailAndPassword(email, password).catch(error => {
       console.log(error);
       console.log(email);
@@ -42,8 +43,8 @@ export const firebaseAuth = {
 
   // Create a new user for the site
   createUser: () => {
-    let email = $("#user-email").val();
-    let password = $("#user-password").val();
+    let email = $("#user-email").val().trim();
+    let password = $("#user-password").val().trim();
     auth.createUserWithEmailAndPassword(email, password).catch(error => {
       console.log(error);
       console.log(email);
@@ -193,7 +194,7 @@ export const firebaseAuth = {
 // LOGIN LISTENERS
 //signs up new user
 $("#auth-sign-in").on("click", event => {
-  firebaseAuth.createUser();
+  mbLayer.validateEmail()
 });
 
 //signs in existing user
