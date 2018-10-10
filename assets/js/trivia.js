@@ -56,7 +56,7 @@ export const triviaAPI = {
       database.ref("game/QandAs/").update({
         activeQuestion: false,
       })
-    },1000);
+    },10);
     console.log(`question ${game.currentQ} pushed`)
   },
 
