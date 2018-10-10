@@ -124,9 +124,10 @@ export const firebaseAuth = {
       displayName,
       loggedIn,
       timestamp,
-      isHost
+      isHost,
+      points:0
     };
-    firebaseAuth.activeUsersRef.set(postData);
+    firebaseAuth.activeUsersRef.update(postData);
   },
 
   // Check for which players will be the host
