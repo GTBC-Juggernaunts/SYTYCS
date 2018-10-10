@@ -99,6 +99,7 @@ export const firebaseAuth = {
         );
         firebaseAuth.gameHostCheck();
         // disconnect logic here
+        firebaseAuth.loggedIn = false;
         firebaseAuth.activeUsersRef.onDisconnect().remove();
       } else {
         firebaseAuth.loggedIn = false;
