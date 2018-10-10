@@ -27,7 +27,7 @@ $(document).ready(function() {
       database.ref(`game/activeUsers`).on('value', function (snapshot) {
         console.log('checking active users');
         console.log(Object.keys(snapshot.val()).length);
-        if (Object.keys(snapshot.val()).length === 1) {
+        if (Object.keys(snapshot.val()).length === 1 && firebaseAuth.loggedIn) {
           firebaseAuth.isHost = true;
           database.ref(`game/activeUsers/${firebaseAuth.uid}/`)
               .update({
@@ -50,7 +50,8 @@ $(document).ready(function() {
 
   // Listener for question changes
   QaAref.on('value',function(snapshot){
-    triviaAPI.onQuestionChange(snapshot.val().question, snapshot.val().answers, snapshot.val().correctAnswer)
+    let response = snapshot.val();
+    triviaAPI.onQuestionChange(response.question, response.answers, response.correctAnswer, response.activeQuestion)
   })
 
 });
