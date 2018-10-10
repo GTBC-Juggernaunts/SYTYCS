@@ -32,7 +32,6 @@ export const firebaseAuth = {
   // Sign users out
   signOut: () => {
     auth.signOut();
-    firebaseAuth.AuthStateChanged();
   },
 
   //Sign in Existing User
@@ -77,7 +76,6 @@ export const firebaseAuth = {
         });
       })
       .catch(error => {});
-    // firebaseAuth.AuthStateChanged();
   },
 
   //Check for auth state to change - Logging out of a federated model
@@ -145,7 +143,9 @@ export const firebaseAuth = {
 
   // Check for which players will be the host
   gameHostCheck: () => {
-    firebaseAuth.activeHostRef.once("value").then(snapshot => {
+    console.log(firebaseAuth)
+    if (firebaseAuth.loggedIn) {
+      firebaseAuth.activeHostRef.once("value").then(snapshot => {
       console.log(`game host check object: ${snapshot.val()}`);
       if (snapshot.val() === false) {
         console.log("looking for new host");
@@ -179,7 +179,7 @@ export const firebaseAuth = {
             }
           });
       }
-    });
+    })};
   },
 
   // Constantly check for a host when someone leaves the game
