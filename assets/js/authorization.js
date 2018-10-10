@@ -1,6 +1,12 @@
-import { config } from "./firebase.js";
-import { triviaAPI } from "./trivia.js";
-import { mbLayer } from "./email.js";
+import {
+  config
+} from "./firebase.js";
+import {
+  triviaAPI
+} from "./trivia.js";
+import {
+  mbLayer
+} from "./email.js";
 
 // create instance of Google provider object
 export const auth = firebase.auth();
@@ -21,11 +27,13 @@ export const firebaseAuth = {
   gameIsHost: "",
   isHost: false,
   timestamp: Date.now(),
+
+  // Methods
+  // Sign users out
   signOut: () => {
     auth.signOut();
   },
 
-  // Methods
   //Sign in Existing User
   signInExistingUser: () => {
     let email = $("#user-email")
@@ -37,7 +45,8 @@ export const firebaseAuth = {
     auth.signInWithEmailAndPassword(email, password).catch(error => {
       console.log(error);
       console.log(email);
-    });
+    })
+    firebaseAuth.AuthStateChanged();
   },
 
   // Create a new user for the site
@@ -52,25 +61,28 @@ export const firebaseAuth = {
       console.log(error);
       console.log(email);
     });
+    firebaseAuth.AuthStateChanged();
   },
 
   // Sign in with a federated model
   signIn: authProvider => {
-    console.log(`Supposed to sign in`);
+    console.log(`Supposed to sign in with Google`);
     auth
       .setPersistence(firebase.auth.Auth.Persistence.SESSION)
-      .then(function() {
-        return auth.signInWithRedirect(authProvider).then(result => {
+      .then(function () {
+        return auth.signInWithPopup(authProvider).then(result => {
           console.log(result);
           console.log(email);
         });
       })
       .catch(error => {});
+      firebaseAuth.AuthStateChanged();
   },
 
   //Check for auth state to change - Logging out of a federated model
   AuthStateChanged: () => {
     auth.onAuthStateChanged(firebaseUser => {
+      console.log(`Auth State Changing`)
       if (firebaseUser) {
         console.log("FirebaseUser object below");
         console.log(firebaseUser);
@@ -99,7 +111,6 @@ export const firebaseAuth = {
         );
         firebaseAuth.gameHostCheck();
         // disconnect logic here
-        firebaseAuth.loggedIn = false;
         firebaseAuth.activeUsersRef.onDisconnect().remove();
       } else {
         firebaseAuth.loggedIn = false;
@@ -126,14 +137,16 @@ export const firebaseAuth = {
       loggedIn,
       timestamp,
       isHost,
-      points:0
+      points: 0
     };
     firebaseAuth.activeUsersRef.update(postData);
   },
 
   // Check for which players will be the host
   gameHostCheck: () => {
-    firebaseAuth.activeHostRef.once("value").then(snapshot => {
+    console.log(firebaseAuth)
+    if (firebaseAuth.loggedIn) {
+      firebaseAuth.activeHostRef.once("value").then(snapshot => {
       console.log(`game host check object: ${snapshot.val()}`);
       if (snapshot.val() === false) {
         console.log("looking for new host");
@@ -159,7 +172,7 @@ export const firebaseAuth = {
                 .update({
                   isHost: true
                 })
-                .then(function() {
+                .then(function () {
                   firebaseAuth.gameRef.update({
                     activeHost: true
                   });
@@ -167,12 +180,12 @@ export const firebaseAuth = {
             }
           });
       }
-    });
+    })};
   },
 
   // Constantly check for a host when someone leaves the game
-  hostListener: function() {
-    database.ref("game/activeUsers").on("child_removed", function(data) {
+  hostListener: function () {
+    database.ref("game/activeUsers").on("child_removed", function (data) {
       firebaseAuth.gameHostCheck();
     });
   },
@@ -196,7 +209,7 @@ export const firebaseAuth = {
 // LOGIN LISTENERS
 //signs up new user
 $("#auth-sign-up").on("click", event => {
-  mbLayer.validateEmail()
+  mbLayer.validateEmail();
 });
 
 //signs in existing user
@@ -214,5 +227,5 @@ $("#google-login").on("click", event => {
   firebaseAuth.signIn(googleAuthProvider);
 });
 
-// listener for authentication state change
-firebaseAuth.AuthStateChanged();
+// // listener for authentication state change
+// firebaseAuth.AuthStateChanged();
