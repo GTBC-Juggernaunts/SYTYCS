@@ -53,7 +53,7 @@ export const firebaseAuth = {
 
   // Sign in with a federated model
   signIn: authProvider => {
-    console.log(`Supposed to sign in`)
+    console.log(`Supposed to sign in`);
     auth
       .setPersistence(firebase.auth.Auth.Persistence.SESSION)
       .then(function () {
@@ -169,9 +169,6 @@ export const firebaseAuth = {
   hostListener: function () {
     database.ref("game/activeUsers").on("child_removed", function (data) {
       firebaseAuth.gameHostCheck();
-      if (firebaseAuth.isHost) {
-        triviaAPI.questionReturn();
-      }
     });
   },
 
