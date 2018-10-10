@@ -2,8 +2,13 @@
 //Import Modules
 //=====================================================================================================================
 
-import { firebaseAuth, auth } from "./authorization.js";
-import { config } from "./firebase.js";
+import {
+  firebaseAuth,
+  auth
+} from "./authorization.js";
+import {
+  config
+} from "./firebase.js";
 
 const database = firebase.database();
 //=====================================================================================================================
@@ -11,7 +16,7 @@ const database = firebase.database();
 //=====================================================================================================================
 
 export const triviaAPI = {
-  
+
   queryUrl: "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=base64",
 
   // Grab Questions from the API
@@ -36,8 +41,8 @@ export const triviaAPI = {
     });
   },
 
-  onQuestionChange: function(question, answers, correctAnswer, activeQuestion){
-    if(activeQuestion) {
+  onQuestionChange: function (question, answers, correctAnswer, activeQuestion) {
+    if (activeQuestion) {
       game.currentQ += 1;
       game.unselector();
       game.displayQ(atob(question), answers);
@@ -47,7 +52,7 @@ export const triviaAPI = {
     }
   },
 
-  hostPushQuestion: function(question, answers, correctAnswer, currentQ) {
+  hostPushQuestion: function (question, answers, correctAnswer, currentQ) {
     database.ref("game/").update({
       currentQ,
     });
@@ -57,11 +62,11 @@ export const triviaAPI = {
       correctAnswer,
       activeQuestion: true,
     });
-    setTimeout(function(){
+    setTimeout(function () {
       database.ref("game/QandAs/").update({
         activeQuestion: false,
       })
-    },10);
+    }, 10);
     console.log(`question ${game.currentQ} pushed`)
   },
 
@@ -97,12 +102,12 @@ export const game = {
   selectionTimer: 0, //masking name of variable so people don't immediately change it
   currentQ: 0,
 
-  startGame: function() {
+  startGame: function () {
     game.currentQ = 0;
     triviaAPI.questionReturn();
   },
 
-  displayQ: function(question, answers) {
+  displayQ: function (question, answers) {
     $("#question").html(`<h4>${question}</h4>`);
     $("#answer1").text(answers[0]);
     $("#answer2").text(answers[1]);
@@ -143,39 +148,42 @@ export const game = {
     clearInterval(game.intervalId);
     console.log(`Possible Points: ${game.selectionTimer}`);
     console.log("End of question");
-    //check for if answer matches the correct answer
+
+    // Check for if selected answer matches the correct answer
+    // Checks if current user is logged in before adding points otherwise we get dangling points in game object
+
     if (game.selectedAnswer === atob(game.correctAnswer)) {
       console.log(`Correct!`);
       game.userPoints += game.selectionTimer;
-      database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
-        points: game.userPoints
-      });
       console.log(game.userPoints);
-      $("#player-points").text(game.userPoints);
+      if (auth.currentUser) {
+        database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
+          points: game.userPoints
+        });
+        $("#player-points").text(game.userPoints);
+      }
       game.currentQStatus = "Inactive";
     } else {
       game.currentQStatus = "Inactive";
       console.log(`Correct Answer: ${atob(game.correctAnswer)}`);
     }
 
-    if(game.currentQ >= 10){
-      setTimeout(function(){
+    if (game.currentQ >= 10) {
+      setTimeout(function () {
         database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
           points: 0
         })
-      },2000)
+      }, 2000)
     }
 
     if (firebaseAuth.isHost === true && game.currentQ < 10) {
       setTimeout(triviaAPI.questionReturn, 3000);
-    }
-
-    else if (firebaseAuth.isHost === true && game.currentQ >= 10) {
+    } else if (firebaseAuth.isHost === true && game.currentQ >= 10) {
       game.endGame();
     }
   },
 
-  endGame: function() {
+  endGame: function () {
     game.currentQ = 0;
     console.log("game-over")
     database.ref("game/").update({
@@ -200,13 +208,13 @@ export const game = {
     // Checked if a user is logged in to determine if points will be awarded for answering 
     else {
       if (auth.currentUser) {
-      game.unselector();
-      game.selectedAnswer = event[0].target.innerText;
-      game.selectionTimer = game.points;
-      $(event[0].target).parent().addClass('active');
+        game.unselector();
+        game.selectedAnswer = event[0].target.innerText;
+        game.selectionTimer = game.points;
+        $(event[0].target).parent().addClass('active');
+      }
     }
-  }
- },
+  },
 }
 
 //=====================================================================================================================
