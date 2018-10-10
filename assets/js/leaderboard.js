@@ -25,6 +25,7 @@ leaderRef.on("child_added", snapshot => {
 leaderRef.on("child_removed", snapshot => {
   let displayName = snapshot.val().displayName;
   userArr = removeUser(userArr, displayName);
+  displayLeader(userArr);
   console.log(`username child removed: ${displayName}`);
   console.log(`arr: ${JSON.parse(userArr)}`);
 });
