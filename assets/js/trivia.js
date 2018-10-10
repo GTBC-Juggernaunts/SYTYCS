@@ -2,7 +2,7 @@
 //Import Modules
 //=====================================================================================================================
 
-import { firebaseAuth } from "./authorization.js";
+import { firebaseAuth, auth } from "./authorization.js";
 import { config } from "./firebase.js";
 
 const database = firebase.database();
@@ -168,7 +168,7 @@ export const game = {
     database.ref("game/").update({
       currentQ: game.currentQ,
     });
-    setTimeout(game.startGame, 15000)
+    // setTimeout(game.startGame, 15000)
   },
 
   //  Unselect any answer from the board
@@ -180,22 +180,26 @@ export const game = {
   },
 
   // Determine which answer a user selected and if within the window of an active question
-  onClick: function (event) {
+  selectAnAnswer: function (event) {
     if (game.currentQStatus === "Inactive") {
       console.log("Question not active.")
-    } else {
+    }
+    // Checked if a user is logged in to determine if points will be awarded for answering 
+    else {
+      if (auth.currentUser) {
       game.unselector();
       game.selectedAnswer = event[0].target.innerText;
       game.selectionTimer = game.points;
       $(event[0].target).parent().addClass('active');
     }
   }
-};
+ },
+}
 
 //=====================================================================================================================
 //Game Runtime
 //=====================================================================================================================
 
 $(".answer").click(event => {
-  game.onClick($(event));
+  game.selectAnAnswer($(event));
 });

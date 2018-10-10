@@ -23,29 +23,32 @@ $(document).ready(function() {
   game.currentQ = 1;
   database.ref('game').child('activeGame').once('value', function(snapshot) {
     console.log(`activeGame: ${snapshot.val()}`);
-    if (!snapshot.val()) {
-      database.ref(`game/activeUsers`).on('value', function (snapshot) {
-        console.log('checking active users');
-        console.log(Object.keys(snapshot.val()).length);
-        if (Object.keys(snapshot.val()).length === 1 && firebaseAuth.loggedIn) {
-          firebaseAuth.isHost = true;
-          database.ref(`game/activeUsers/${firebaseAuth.uid}/`)
-              .update({
-                isHost: true
-              })
-              .then(function () {
-                firebaseAuth.gameRef.update({
-                  activeHost: true
-                })
-              })
-        }
-        else if (firebaseAuth.isHost && Object.keys(snapshot.val()).length >= 3) {
+    console.log(`firsbaseauth.is host is: ${firebaseAuth.isHost} and number of users is ${Object.keys(snapshot.val()).length >= 3}`)
+    if 
+    // (!snapshot.val()) {
+    //   database.ref(`game/activeUsers`).on('value', function (snapshot) {
+    //     console.log('checking active users');
+    //     console.log(Object.keys(snapshot.val()).length);
+    //     if (Object.keys(snapshot.val()).length === 1 && firebaseAuth.loggedIn) {
+    //       firebaseAuth.isHost = true;
+    //       database.ref(`game/activeUsers/${firebaseAuth.uid}/`)
+    //           .update({
+    //             isHost: true
+    //           })
+    //           .then(function () {
+    //             firebaseAuth.gameRef.update({
+    //               activeHost: true
+    //             })
+    //           })
+    //     }
+    //     else if
+    (firebaseAuth.isHost && Object.keys(snapshot.val()).length >= 3) {
           console.log('starting game');
           setTimeout(game.startGame(),10000);
         }
       });
     }
-  });
+  );
 
 
   // Listener for question changes
@@ -53,5 +56,3 @@ $(document).ready(function() {
     let response = snapshot.val();
     triviaAPI.onQuestionChange(response.question, response.answers, response.correctAnswer, response.activeQuestion)
   })
-
-});
