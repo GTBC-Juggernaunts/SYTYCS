@@ -56,7 +56,7 @@ export const triviaAPI = {
       database.ref("game/QandAs/").update({
         activeQuestion: false,
       })
-    },1000);
+    },10);
     console.log(`question ${game.currentQ} pushed`)
   },
 
@@ -119,6 +119,8 @@ export const game = {
   },
 
   startTimer: function() {
+    clearInterval(game.questionIntervalId);
+    clearInterval(game.intervalId);
     game.questionTimer = 10;
     game.points = 1000;
     game.questionIntervalId = setInterval(game.decrementQ, 1000);
@@ -156,9 +158,11 @@ export const game = {
 
   endGame: function() {
     game.currentQ = 0;
+    console.log("game-over")
     database.ref("game/").update({
-      currentQ,
+      currentQ: game.currentQ,
     });
+    setTimeout(game.startGame, 15000)
   },
 
   unselector: function() {
