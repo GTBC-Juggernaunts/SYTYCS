@@ -23,6 +23,7 @@ $(document).ready(function() {
   game.currentQ = 1;
   database.ref('game').child('activeGame').once('value', function(snapshot) {
     console.log(`activeGame: ${snapshot.val()}`);
+    console.log(`firsbaseauth.is host is: ${firebaseAuth.isHost} and number of users is ${Object.keys(snapshot.val()).length >= 3}`)
     if 
     // (!snapshot.val()) {
     //   database.ref(`game/activeUsers`).on('value', function (snapshot) {
