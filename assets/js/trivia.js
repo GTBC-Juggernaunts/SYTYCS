@@ -75,9 +75,6 @@ export const triviaAPI = {
 
 // Game object
 export const game = {
-  userId: "",
-  sessionId: "",
-  isActive: false,
   points: 0,
   questionTimer: 10,
   questionIntervalId: "",
@@ -87,11 +84,11 @@ export const game = {
   correctAnswer: "",
   selectedAnswer: "",
   selectionTimer: 0, //masking name of variable so people don't immediately change it
-  currentQ: 1,
+  currentQ: 0,
 
   startGame: function() {
     game.currentQ = 0;
-
+    triviaAPI.questionReturn();
   },
 
   displayQ: function(question, answers) {
@@ -143,6 +140,7 @@ export const game = {
         points: game.userPoints
       });
       console.log(game.userPoints);
+      $("#player-points").text(game.userPoints);
       game.currentQStatus = "Inactive";
     } else {
       game.currentQStatus = "Inactive";
@@ -157,7 +155,10 @@ export const game = {
   },
 
   endGame: function() {
-    //TODO figure out end game shit
+    game.currentQ = 0;
+    database.ref("game/").update({
+      currentQ,
+    });
   },
 
   //  Unselect any answer from the board
