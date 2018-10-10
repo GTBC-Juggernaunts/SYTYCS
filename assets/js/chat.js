@@ -5,20 +5,6 @@ import {auth} from "./authorization.js";
 const database = firebase.database();
 const messages = database.ref('/messages');
 
-const userActions = {
-  userDisplayName: `${firebaseAuth.userDisplayName}`,
-//   loggedIn: firebaseAuth.loggedIn,
-  insertActiveUser: () => {
-    if (firebaseAuth.loggedIn) {
-    //   console.log(`logged in: ${firebaseAuth.loggedIn}`);
-    //   console.log(firebaseAuth.loggedIn);
-    } else {
-    //   console.log(`logged in: ${firebaseAuth.loggedIn}`);
-    //   console.log(firebaseAuth.loggedIn);
-    }
-  }
-}
-
 // LISTENER:
 // Take user input and add it to the databse
 $('#trash-talk').click( () => {
@@ -35,6 +21,6 @@ $('#trash-talk').click( () => {
 // DB LISTENER:
 // Write messages to chat box
 messages.on('child_added', snapshot => {
-  $('.trash-talk-chat').append(`<h6> ${snapshot.val().message}`);
+  $('.trash-talk-chat').append(`<h6> ${snapshot.val().message}</h6>`);
   $('#trash-talk-message').val('');
 })
