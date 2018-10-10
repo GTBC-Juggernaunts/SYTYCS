@@ -58,7 +58,7 @@ export const triviaAPI = {
       database.ref("game/QandAs/").update({
         activeQuestion: false,
       })
-    },1000);
+    },10);
     console.log(`question ${game.currentQ} pushed`)
   },
 
@@ -164,9 +164,11 @@ export const game = {
 
   endGame: function() {
     game.currentQ = 0;
+    console.log("game-over")
     database.ref("game/").update({
-      currentQ,
+      currentQ: game.currentQ,
     });
+    setTimeout(game.startGame, 15000)
   },
 
   //  Unselect any answer from the board
