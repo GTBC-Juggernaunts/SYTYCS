@@ -35,11 +35,13 @@ export const triviaAPI = {
       triviaAPI.hostPushQuestion(results.question, answers, results.correct_answer, game.currentQ)
     });
   },
-  onQuestionChange: function(question, answers, correctAnswer){
-    game.displayQ(atob(question), answers);
-    game.currentQStatus = "Active";
-    game.correctAnswer = correctAnswer;
-    game.startTimer();
+  onQuestionChange: function(question, answers, correctAnswer, activeQuestion){
+    if(activeQuestion) {
+      game.displayQ(atob(question), answers);
+      game.currentQStatus = "Active";
+      game.correctAnswer = correctAnswer;
+      game.startTimer();
+    }
   },
 
   hostPushQuestion: function(question, answers, correctAnswer, currentQ) {
@@ -49,8 +51,14 @@ export const triviaAPI = {
     database.ref("game/QandAs/").update({
       question,
       answers,
-      correctAnswer
+      correctAnswer,
+      activeQuestion: true,
     });
+    setTimeout(function(){
+      database.ref("game/QandAs/").update({
+        activeQuestion: false,
+      })
+    },1000);
     console.log(`question ${game.currentQ} pushed`)
   },
 
