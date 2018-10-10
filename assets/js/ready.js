@@ -51,8 +51,7 @@ $(document).ready(function() {
   // Listener for question changes
   QaAref.on('value',function(snapshot){
     let response = snapshot.val();
-    triviaAPI.onQuestionChange(response.question, response.answers, response.correctAnswer, response.activeQuestion);
-    console.log(`question status: ${response.activeQuestion}`)
+    triviaAPI.onQuestionChange(response.question, response.answers, response.correctAnswer, response.activeQuestion)
   })
 
 });
