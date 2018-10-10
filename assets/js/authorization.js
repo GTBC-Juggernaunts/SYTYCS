@@ -125,7 +125,10 @@ export const firebaseAuth = {
             activeHost: false
           });
         }
-        firebaseAuth.activeUsersRef.remove();
+        if(firebaseAuth.activeUserRef.key != 'activeUsers') {
+          console.log(firebaseAuth.activeUsersRef);
+          firebaseAuth.activeUsersRef.remove();
+        }
       }
     });
   },

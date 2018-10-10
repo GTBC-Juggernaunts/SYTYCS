@@ -48,6 +48,8 @@ export const triviaAPI = {
       game.displayQ(atob(question), answers);
       game.currentQStatus = "Active";
       game.correctAnswer = correctAnswer;
+      clearInterval(game.questionIntervalId);
+      clearInterval(game.intervalId);
       game.startTimer();
     }
   },
