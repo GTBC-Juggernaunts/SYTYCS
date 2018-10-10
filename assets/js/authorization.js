@@ -21,11 +21,13 @@ export const firebaseAuth = {
   gameIsHost: "",
   isHost: false,
   timestamp: Date.now(),
+
+  // Methods
+  // Sign users out
   signOut: () => {
     auth.signOut();
   },
 
-  // Methods
   //Sign in Existing User
   signInExistingUser: () => {
     let email = $("#user-email")
@@ -71,6 +73,7 @@ export const firebaseAuth = {
   //Check for auth state to change - Logging out of a federated model
   AuthStateChanged: () => {
     auth.onAuthStateChanged(firebaseUser => {
+      console.log(`Auth State Changing`)
       if (firebaseUser) {
         console.log("FirebaseUser object below");
         console.log(firebaseUser);
@@ -212,6 +215,3 @@ $(".logout").on("click", event => {
 $("#google-login").on("click", event => {
   firebaseAuth.signIn(googleAuthProvider);
 });
-
-// listener for authentication state change
-firebaseAuth.AuthStateChanged();
