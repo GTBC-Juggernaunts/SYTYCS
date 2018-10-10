@@ -76,6 +76,7 @@ export const firebaseAuth = {
         });
       })
       .catch(error => {});
+      firebaseAuth.AuthStateChanged();
   },
 
   //Check for auth state to change - Logging out of a federated model
