@@ -1,7 +1,15 @@
-import { firebaseAuth } from "./authorization.js";
-import { triviaAPI } from "./trivia.js";
-import { game } from "./trivia.js";
-import { config } from "./firebase.js";
+import {
+  firebaseAuth
+} from "./authorization.js";
+import {
+  triviaAPI
+} from "./trivia.js";
+import {
+  game
+} from "./trivia.js";
+import {
+  config
+} from "./firebase.js";
 const database = firebase.database();
 const QaAref = database.ref("game/QandAs/");
 
@@ -9,7 +17,7 @@ const QaAref = database.ref("game/QandAs/");
 M.AutoInit();
 
 
-$(document).ready(function() {
+$(document).ready(function () {
   console.log("document ready...");
   //Listener for player dropping from game
   firebaseAuth.hostListener();
@@ -22,12 +30,11 @@ $(document).ready(function() {
 
   database.ref('game').child('activeGame').once('value', function (snapshot) {
     console.log(`activeGame: ${snapshot.val()}`);
-    //console.log(`firsbaseauth.is host is: ${firebaseAuth.isHost} and number of users is ${Object.keys(snapshot.val()).length >= 3}`);
 
-    if (!snapshot.val()) {
     // change if there are any active users, if only 1 active user and logged
     // then set currentuser isHost to true and update your reference with matching value
     // and then claim the game's active host
+    if (!snapshot.val()) {
       database.ref(`game/activeUsers`).once('value', function (snapshot) {
         console.log('checking active users');
         // console.log(Object.keys(snapshot.val()).length);
@@ -42,9 +49,7 @@ $(document).ready(function() {
                 activeHost: true
               })
             })
-        }
-        else if
-        (firebaseAuth.isHost && Object.keys(snapshot.val()).length >= 3) {
+        } else if (firebaseAuth.isHost && Object.keys(snapshot.val()).length >= 3) {
           console.log('starting game');
           setTimeout(game.startGame(), 10000);
         }
