@@ -10,27 +10,35 @@ const leaderRef = database.ref(`/game/activeUsers/`);
 let userArr = [];
 
 // listener for when user logins
-leaderRef.on("child_added", snapshot => {
+leaderRef.on("child_changed", function(snapshot) {
   let displayName = snapshot.val().displayName;
   let userPoints = snapshot.val().points;
+  let newScore = { name: displayName, score: userPoints };
+  // checks if user already exists in array if not then add them
   if (!isUserExist(userArr, displayName)) {
     userArr.push({ name: displayName, score: userPoints });
+    displayLeader(userArr);
+  } else {
+    // loops through array to remove the existing user to update their score with  newScore
+    for (var i = 0; i < userArr.length; i++) {
+      if (userArr[i].name == displayName) {
+        userArr.splice(i, 1);
+      }
+    }
+    userArr.push(newScore);
+    sortPlayerScores();
+    displayLeader(userArr);
   }
-  displayLeader(userArr);
-  console.log(`username child add: ${displayName}`);
-  console.log(userArr);
 });
 
-// listener for when user logouts
+// listener for when user logouts then remove them from the array and dom
 leaderRef.on("child_removed", snapshot => {
   let displayName = snapshot.val().displayName;
   userArr = removeUser(userArr, displayName);
   displayLeader(userArr);
-  console.log(`username child removed: ${displayName}`);
-  console.log(`arr: ${JSON.parse(userArr)}`);
 });
 
-// function to a handle is a user exists
+// function to handle is a user exists
 function isUserExist(arr, name) {
   // if one user in the array has the same name as the argument passed in it returns true otherwise return false
   return arr.some(user => user.name === name);
@@ -38,28 +46,32 @@ function isUserExist(arr, name) {
 
 // function to handle removing a user
 function removeUser(arr, name) {
-  // if the name being passed in as an argument doesn't exist int he userArr then add it
+  // if the name being passed in as an argument doesn't exist in the userArr then add it
   return arr.filter(user => user.name !== name);
 }
 
 // function to sort players by their score
-userArr.sort(function(a, b) {
-  if (a.score > b.score) {
-    return -1;
-  }
-  if (a.score < b.score) {
-    return 1;
-  }
-  // scores must be equal
-  return 0;
-});
+function sortPlayerScores() {
+  userArr.sort(function(a, b) {
+    if (a.score > b.score) {
+      return -1;
+    }
+    if (a.score < b.score) {
+      return 1;
+    }
+    // scores must be equal
+    return 0;
+  });
+}
 
-// even if user is not logged in display the leaderboard
+//execute this to display message
 displayLeader(userArr);
 
-// displays top 3 leaders to the dom
+// displays top 3 leaders to the dom if 3 players are present if not display waiting message
 function displayLeader(array) {
   if (userArr.length >= 3) {
+    console.log(`updating the display with new array`);
+    console.log(array);
     $("#leader0").html(
       `<h6>1st: ${array[0].name} - ${array[0].score} points</h6>`
     );
