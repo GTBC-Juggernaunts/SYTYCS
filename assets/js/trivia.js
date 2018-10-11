@@ -16,7 +16,7 @@ const database = firebase.database();
 //=====================================================================================================================
 
 export const triviaAPI = {
-
+  newGame: false,
   queryUrl: "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=base64",
 
   // Grab Questions from the API
@@ -38,6 +38,10 @@ export const triviaAPI = {
       //answers now stored in random order inside 'answers' array on host computer
       console.log("pushing question");
       game.currentQ += 1;
+      if (triviaAPI.newGame === true) {
+        game.currentQ = 1;
+        triviaAPI.newGame = false; 
+      }
       triviaAPI.hostPushQuestion(results.question, answers, results.correct_answer, game.currentQ)
     });
   },
@@ -104,8 +108,10 @@ export const game = {
   currentQ: 0,
 
   startGame: function () {
-    game.currentQ = 1;
-    triviaAPI.questionReturn();
+    triviaAPI.newGame = true
+    database.ref('game/QandAs/').update({
+      currentQ: 1,
+    }).then(triviaAPI.questionReturn());
   },
 
   displayQ: function (question, answers) {
