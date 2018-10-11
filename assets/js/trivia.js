@@ -156,6 +156,18 @@ export const game = {
     console.log(`Possible Points: ${game.selectionTimer}`);
     console.log("End of question");
 
+    //sets coloring on correct/incorrect answers
+    let collections = $(".answer");
+    console.log("activate color changing technology");
+    for (let i = 0; i < collections.length; i++) {
+      if(collections[i].innerText === atob(game.correctAnswer)){
+        $(collections[i]).parent().addClass('correct')
+      }
+      else {
+         $(collections[i]).parent().addClass('incorrect');
+      }
+    }
+
     // Check for if selected answer matches the correct answer
     // Checks if current user is logged in before adding points otherwise we get dangling points in game object
 
@@ -207,7 +219,9 @@ export const game = {
   unselector: function () {
     let collections = $(".answer");
     for (let i = 0; i < collections.length; i++) {
-      $(collections[i]).parent().removeClass('active');
+      $(collections[i]).parent().removeClass('active')
+        .removeClass('correct')
+        .removeClass('incorrect')
     }
   },
 
