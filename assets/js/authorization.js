@@ -29,14 +29,23 @@ export const firebaseAuth = {
   timestamp: Date.now(),
 
   // Methods
+
+  // Reset user info
+  resetUserInfo: () => {
+    firebaseAuth.userDisplayName = '',
+    firebaseAuth.loggedIn = false,
+    firebaseAuth.uid = '',
+    firebaseAuth.gameIsHost = '',
+    firebaseAuth.isHost = false
+  },
+
   // Sign users out
   signOut: () => {
     console.log(`signing out, uid: ${firebaseAuth.uid}`);
-    if(firebaseAuth.uid != null) {
+    if (firebaseAuth.uid != '') {
       database.ref(`game/activeUsers/${firebaseAuth.uid}/`).remove();
       auth.signOut()
     }
-    // .then(function(){firebaseAuth.AuthStateChanged()})
   },
 
   //Sign in Existing User
@@ -48,11 +57,13 @@ export const firebaseAuth = {
       .val()
       .trim();
     auth.signInWithEmailAndPassword(email, password)
-    .then(function(){firebaseAuth.AuthStateChanged()})
-    .catch(error => {
-      console.log(error);
-      console.log(email);
-    });
+      .then(function () {
+        firebaseAuth.AuthStateChanged()
+      })
+      .catch(error => {
+        console.log(error);
+        console.log(email);
+      });
 
   },
 
@@ -65,11 +76,13 @@ export const firebaseAuth = {
       .val()
       .trim();
     auth.createUserWithEmailAndPassword(email, password)
-    .then(function(){firebaseAuth.AuthStateChanged()})
-    .catch(error => {
-      console.log(error);
-      console.log(email);
-    });
+      .then(function () {
+        firebaseAuth.AuthStateChanged()
+      })
+      .catch(error => {
+        console.log(error);
+        console.log(email);
+      });
   },
 
   // Sign in with a federated model
@@ -79,11 +92,13 @@ export const firebaseAuth = {
       .setPersistence(firebase.auth.Auth.Persistence.SESSION)
       .then(function () {
         return auth.signInWithPopup(authProvider)
-        .then(function(){firebaseAuth.AuthStateChanged()})
-        .then(result => {
-          console.log(result);
-          console.log(email);
-        });
+          .then(function () {
+            firebaseAuth.AuthStateChanged()
+          })
+          .then(result => {
+            console.log(result);
+            console.log(email);
+          });
       })
       .catch(error => {});
   },
@@ -120,9 +135,12 @@ export const firebaseAuth = {
         );
         firebaseAuth.gameHostCheck();
         // disconnect logic here
+        console.log(`disconnecting User using the disconnect method`)
         firebaseAuth.activeUsersRef.onDisconnect().remove();
       } else {
-        firebaseAuth.loggedIn = false;
+        firebaseAuth.resetUserInfo()
+        console.log(`I just reset all of the users information when they signed out`)
+        console.log(`the users object ${firebaseAuth}`)
         firebaseAuth.swapLoginBtn(firebaseAuth.loggedIn);
         console.log(`firebase uid: ${firebaseAuth.uid}`);
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
@@ -134,7 +152,7 @@ export const firebaseAuth = {
             activeHost: false
           });
         }
-        if(firebaseAuth.activeUserRef.key != 'activeUsers') {
+        if (firebaseAuth.activeUserRef.key != 'activeUsers') {
           console.log(firebaseAuth.activeUsersRef);
           firebaseAuth.activeUsersRef.remove();
         }
@@ -159,45 +177,47 @@ export const firebaseAuth = {
     console.log(firebaseAuth)
     if (firebaseAuth.loggedIn) {
       firebaseAuth.activeHostRef.once("value").then(snapshot => {
-      console.log(`game host check object: ${snapshot.val()}`);
-      if (snapshot.val() === false) {
-        console.log("looking for new host");
-        database
-          .ref("game/activeUsers/")
-          .once("value")
-          .then(usersSnapshot => {
-            let lowestTimestamp = 9999999999999;
-            let newHost = "";
-            usersSnapshot.forEach(user => {
-              if (user.val().timestamp < lowestTimestamp) {
-                newHost = user.key;
-                lowestTimestamp = user.timestamp;
-              }
-              console.log(`new possible host: ${newHost}`);
-            });
-            console.log(`new host determined: ${newHost}`);
-            if (newHost === firebaseAuth.uid ) {
-              console.log("setting new host");
-              firebaseAuth.isHost = true;
-              database
-                .ref(`game/activeUsers/${firebaseAuth.uid}/`)
-                .update({
-                  isHost: true
-                })
-                .then(function () {
-                  firebaseAuth.gameRef.update({
-                    activeHost: true
+        console.log(`game host check object: ${snapshot.val()}`);
+        if (snapshot.val() === false) {
+          console.log("looking for new host");
+          database
+            .ref("game/activeUsers/")
+            .once("value")
+            .then(usersSnapshot => {
+              let lowestTimestamp = 9999999999999;
+              let newHost = "";
+              usersSnapshot.forEach(user => {
+                if (user.val().timestamp < lowestTimestamp) {
+                  newHost = user.key;
+                  lowestTimestamp = user.timestamp;
+                }
+                console.log(`new possible host: ${newHost}`);
+              });
+              console.log(`new host determined: ${newHost}`);
+              if (newHost === firebaseAuth.uid) {
+                console.log("setting new host");
+                firebaseAuth.isHost = true;
+                database
+                  .ref(`game/activeUsers/${firebaseAuth.uid}/`)
+                  .update({
+                    isHost: true
+                  })
+                  .then(function () {
+                    firebaseAuth.gameRef.update({
+                      activeHost: true
+                    });
                   });
-                });
-            }
-          });
-      }
-    })};
+              }
+            });
+        }
+      })
+    };
   },
 
   // Constantly check for a host when someone leaves the game
   hostListener: function () {
     database.ref("game/activeUsers").on("child_removed", function (data) {
+      console.log(`Child is being removed and moving to gameHostCheck`)
       firebaseAuth.gameHostCheck();
     });
   },
