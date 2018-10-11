@@ -31,7 +31,12 @@ export const firebaseAuth = {
   // Methods
   // Sign users out
   signOut: () => {
-    auth.signOut();
+    console.log(`signing out, uid: ${firebaseAuth.uid}`);
+    if(firebaseAuth.uid != null) {
+      database.ref(`game/activeUsers/${firebaseAuth.uid}/`).remove();
+      auth.signOut()
+    }
+    // .then(function(){firebaseAuth.AuthStateChanged()})
   },
 
   //Sign in Existing User
