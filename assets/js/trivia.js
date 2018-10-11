@@ -40,7 +40,7 @@ export const triviaAPI = {
       game.currentQ += 1;
       if (triviaAPI.newGame === true) {
         game.currentQ = 1;
-        triviaAPI.newGame = false; 
+        triviaAPI.newGame = false;
       }
       triviaAPI.hostPushQuestion(results.question, answers, results.correct_answer, game.currentQ)
     });
@@ -177,11 +177,13 @@ export const game = {
       console.log(`Correct Answer: ${atob(game.correctAnswer)}`);
     }
 
-    if (game.currentQ >= 10 ) {
+    if (game.currentQ >= 10) {
       setTimeout(function () {
-        database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
-          points: 0
-        })
+        if (auth.currentUser) {
+          database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
+            points: 0
+          })
+        }
       }, 2000)
     }
 
