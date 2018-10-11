@@ -42,11 +42,13 @@ export const firebaseAuth = {
     let password = $("#user-password")
       .val()
       .trim();
-    auth.signInWithEmailAndPassword(email, password).catch(error => {
+    auth.signInWithEmailAndPassword(email, password)
+    .then(function(){firebaseAuth.AuthStateChanged()})
+    .catch(error => {
       console.log(error);
       console.log(email);
-    })
-    firebaseAuth.AuthStateChanged();
+    });
+
   },
 
   // Create a new user for the site
@@ -57,11 +59,12 @@ export const firebaseAuth = {
     let password = $("#user-password")
       .val()
       .trim();
-    auth.createUserWithEmailAndPassword(email, password).catch(error => {
+    auth.createUserWithEmailAndPassword(email, password)
+    .then(function(){firebaseAuth.AuthStateChanged()})
+    .catch(error => {
       console.log(error);
       console.log(email);
     });
-    firebaseAuth.AuthStateChanged();
   },
 
   // Sign in with a federated model
@@ -70,13 +73,14 @@ export const firebaseAuth = {
     auth
       .setPersistence(firebase.auth.Auth.Persistence.SESSION)
       .then(function () {
-        return auth.signInWithPopup(authProvider).then(result => {
+        return auth.signInWithPopup(authProvider)
+        .then(function(){firebaseAuth.AuthStateChanged()})
+        .then(result => {
           console.log(result);
           console.log(email);
         });
       })
       .catch(error => {});
-      firebaseAuth.AuthStateChanged();
   },
 
   //Check for auth state to change - Logging out of a federated model
@@ -217,6 +221,7 @@ $("#auth-sign-up").on("click", event => {
 
 //signs in existing user
 $("#auth-login").on("click", event => {
+  console.log(`signInExistingUser button trigger`);
   firebaseAuth.signInExistingUser();
 });
 

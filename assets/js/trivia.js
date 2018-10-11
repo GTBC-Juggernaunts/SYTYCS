@@ -170,7 +170,7 @@ export const game = {
       console.log(`Correct Answer: ${atob(game.correctAnswer)}`);
     }
 
-    if (game.currentQ >= 10) {
+    if (game.currentQ >= 10 ) {
       setTimeout(function () {
         database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
           points: 0
