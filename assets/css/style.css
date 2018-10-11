@@ -111,3 +111,11 @@ ol > li {
 .chat {
   float: left;
 }
+
+.correct {
+  color: #2db34a;
+}
+
+.incorrect {
+  color: #bb2200;
+}
