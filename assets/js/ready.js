@@ -21,7 +21,7 @@ $(document).ready(function () {
   console.log("document ready...");
   //Listener for player dropping from game
   firebaseAuth.hostListener();
-  console.log('Page Reloaded')
+  console.log('Page loaded')
 
   //Temporary listener for if user is host to start game
   console.log(`checking firebaseAuth isHost: ${firebaseAuth.isHost}`);
