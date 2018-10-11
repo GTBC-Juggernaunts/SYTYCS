@@ -176,7 +176,7 @@ export const firebaseAuth = {
               console.log(`new possible host: ${newHost}`);
             });
             console.log(`new host determined: ${newHost}`);
-            if (newHost === firebaseAuth.uid) {
+            if (newHost === firebaseAuth.uid ) {
               console.log("setting new host");
               firebaseAuth.isHost = true;
               database
