@@ -22,7 +22,6 @@ $(document).ready(function() {
   database.ref(`game/activeUsers`).on("child_added", function() {
     database.ref(`game/activeUsers`).once("value", function(snapshot) {
       console.log("checking active users");
-      console.log(snapshot.val());
       if (Object.keys(snapshot.val()).length === 1 && firebaseAuth.loggedIn) {
         console.log(
           `Assigning the first person and the only person as the host`

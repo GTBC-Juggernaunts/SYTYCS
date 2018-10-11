@@ -9,6 +9,9 @@ import {
 import {
   config
 } from "./firebase.js";
+import {
+  leaderboard
+} from "./leaderboard.js";
 
 const database = firebase.database();
 //=====================================================================================================================
@@ -188,7 +191,8 @@ export const game = {
       game.currentQStatus = "Inactive";
       console.log(`Correct Answer: ${atob(game.correctAnswer)}`);
     }
-
+    database.ref('game/activeUsers').once('value', snapshot => leaderboard.processScores(snapshot));
+    //calls leaderboard.js file to write the scores to the leaderboard
     if (game.currentQ >= 10) {
       setTimeout(function () {
         if (auth.currentUser) {
