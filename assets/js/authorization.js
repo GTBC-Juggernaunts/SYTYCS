@@ -29,9 +29,22 @@ export const firebaseAuth = {
   timestamp: Date.now(),
 
   // Methods
+
+  // Reset user info
+  resetUserInfo: () => {
+    firebaseAuth.userDisplayName = '',
+      firebaseAuth.loggedIn = false,
+      firebaseAuth.uid = '',
+      firebaseAuth.gameIsHost = ''
+  },
+
   // Sign users out
   signOut: () => {
-    auth.signOut();
+    console.log(`signing out, uid: ${firebaseAuth.uid}`);
+    if (firebaseAuth.uid != '') {
+      database.ref(`game/activeUsers/${firebaseAuth.uid}/`).remove();
+      auth.signOut()
+    }
   },
 
   //Sign in Existing User
@@ -42,11 +55,15 @@ export const firebaseAuth = {
     let password = $("#user-password")
       .val()
       .trim();
-    auth.signInWithEmailAndPassword(email, password).catch(error => {
-      console.log(error);
-      console.log(email);
-    })
-    firebaseAuth.AuthStateChanged();
+    auth.signInWithEmailAndPassword(email, password)
+      .then(function () {
+        firebaseAuth.AuthStateChanged()
+      })
+      .catch(error => {
+        console.log(error);
+        console.log(email);
+      });
+
   },
 
   // Create a new user for the site
@@ -57,11 +74,14 @@ export const firebaseAuth = {
     let password = $("#user-password")
       .val()
       .trim();
-    auth.createUserWithEmailAndPassword(email, password).catch(error => {
-      console.log(error);
-      console.log(email);
-    });
-    firebaseAuth.AuthStateChanged();
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(function () {
+        firebaseAuth.AuthStateChanged()
+      })
+      .catch(error => {
+        console.log(error);
+        console.log(email);
+      });
   },
 
   // Sign in with a federated model
@@ -70,13 +90,16 @@ export const firebaseAuth = {
     auth
       .setPersistence(firebase.auth.Auth.Persistence.SESSION)
       .then(function () {
-        return auth.signInWithPopup(authProvider).then(result => {
-          console.log(result);
-          console.log(email);
-        });
+        return auth.signInWithPopup(authProvider)
+          .then(function () {
+            firebaseAuth.AuthStateChanged()
+          })
+          .then(result => {
+            console.log(result);
+            console.log(email);
+          });
       })
       .catch(error => {});
-      firebaseAuth.AuthStateChanged();
   },
 
   //Check for auth state to change - Logging out of a federated model
@@ -111,9 +134,18 @@ export const firebaseAuth = {
         );
         firebaseAuth.gameHostCheck();
         // disconnect logic here
-        firebaseAuth.activeUsersRef.onDisconnect().remove();
+        console.log(`disconnecting User using the disconnect method`)
+        firebaseAuth.activeUsersRef.onDisconnect().remove()
+        console.log(firebaseAuth)
+        if (firebaseAuth.isHost) {
+          firebaseAuth.gameRef.update({
+            activeHost: false
+          })
+        }
       } else {
-        firebaseAuth.loggedIn = false;
+        firebaseAuth.resetUserInfo()
+        console.log(`I just reset all of the users information when they signed out`)
+        console.log(`the users object ${firebaseAuth}`)
         firebaseAuth.swapLoginBtn(firebaseAuth.loggedIn);
         console.log(`firebase uid: ${firebaseAuth.uid}`);
         console.log(`user is logged in: ${firebaseAuth.loggedIn}`);
@@ -121,11 +153,15 @@ export const firebaseAuth = {
           `game/activeUsers/${firebaseAuth.uid}`
         );
         if (firebaseAuth.isHost) {
+          firebaseAuth.isHost = false;
           firebaseAuth.gameRef.update({
             activeHost: false
           });
         }
-        firebaseAuth.activeUsersRef.remove();
+        if (firebaseAuth.activeUserRef.key != 'activeUsers') {
+          console.log(firebaseAuth.activeUsersRef);
+          firebaseAuth.activeUsersRef.remove();
+        }
       }
     });
   },
@@ -147,45 +183,47 @@ export const firebaseAuth = {
     console.log(firebaseAuth)
     if (firebaseAuth.loggedIn) {
       firebaseAuth.activeHostRef.once("value").then(snapshot => {
-      console.log(`game host check object: ${snapshot.val()}`);
-      if (snapshot.val() === false) {
-        console.log("looking for new host");
-        database
-          .ref("game/activeUsers/")
-          .once("value")
-          .then(usersSnapshot => {
-            let lowestTimestamp = 9999999999999;
-            let newHost = "";
-            usersSnapshot.forEach(user => {
-              if (user.val().timestamp < lowestTimestamp) {
-                newHost = user.key;
-                lowestTimestamp = user.timestamp;
-              }
-              console.log(`new possible host: ${newHost}`);
-            });
-            console.log(`new host determined: ${newHost}`);
-            if (newHost === firebaseAuth.uid) {
-              console.log("setting new host");
-              firebaseAuth.isHost = true;
-              database
-                .ref(`game/activeUsers/${firebaseAuth.uid}/`)
-                .update({
-                  isHost: true
-                })
-                .then(function () {
-                  firebaseAuth.gameRef.update({
-                    activeHost: true
+        console.log(`game host check object: ${snapshot.val()}`);
+        if (snapshot.val() === false) {
+          console.log("looking for new host");
+          database
+            .ref("game/activeUsers/")
+            .once("value")
+            .then(usersSnapshot => {
+              let lowestTimestamp = 9999999999999;
+              let newHost = "";
+              usersSnapshot.forEach(user => {
+                if (user.val().timestamp < lowestTimestamp) {
+                  newHost = user.key;
+                  lowestTimestamp = user.timestamp;
+                }
+                console.log(`new possible host: ${newHost}`);
+              });
+              console.log(`new host determined: ${newHost}`);
+              if (newHost === firebaseAuth.uid) {
+                console.log("setting new host");
+                firebaseAuth.isHost = true;
+                database
+                  .ref(`game/activeUsers/${firebaseAuth.uid}/`)
+                  .update({
+                    isHost: true
+                  })
+                  .then(function () {
+                    firebaseAuth.gameRef.update({
+                      activeHost: true
+                    });
                   });
-                });
-            }
-          });
-      }
-    })};
+              }
+            });
+        }
+      })
+    };
   },
 
   // Constantly check for a host when someone leaves the game
   hostListener: function () {
     database.ref("game/activeUsers").on("child_removed", function (data) {
+      console.log(`Child is being removed and moving to gameHostCheck`)
       firebaseAuth.gameHostCheck();
     });
   },
@@ -214,6 +252,7 @@ $("#auth-sign-up").on("click", event => {
 
 //signs in existing user
 $("#auth-login").on("click", event => {
+  console.log(`signInExistingUser button trigger`);
   firebaseAuth.signInExistingUser();
 });
 

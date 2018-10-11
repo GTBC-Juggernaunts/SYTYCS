@@ -16,7 +16,7 @@ const database = firebase.database();
 //=====================================================================================================================
 
 export const triviaAPI = {
-
+  newGame: false,
   queryUrl: "https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=base64",
 
   // Grab Questions from the API
@@ -37,29 +37,34 @@ export const triviaAPI = {
       triviaAPI.shuffle(answers);
       //answers now stored in random order inside 'answers' array on host computer
       console.log("pushing question");
+      game.currentQ += 1;
+      if (triviaAPI.newGame === true) {
+        game.currentQ = 1;
+        triviaAPI.newGame = false;
+      }
       triviaAPI.hostPushQuestion(results.question, answers, results.correct_answer, game.currentQ)
     });
   },
 
-  onQuestionChange: function (question, answers, correctAnswer, activeQuestion) {
+  onQuestionChange: function (question, answers, correctAnswer, activeQuestion, currentQ) {
     if (activeQuestion) {
-      game.currentQ += 1;
+      game.currentQ = currentQ
       game.unselector();
       game.displayQ(atob(question), answers);
       game.currentQStatus = "Active";
       game.correctAnswer = correctAnswer;
+      clearInterval(game.questionIntervalId);
+      clearInterval(game.intervalId);
       game.startTimer();
     }
   },
 
   hostPushQuestion: function (question, answers, correctAnswer, currentQ) {
-    database.ref("game/").update({
-      currentQ,
-    });
     database.ref("game/QandAs/").update({
       question,
       answers,
       correctAnswer,
+      currentQ,
       activeQuestion: true,
     });
     setTimeout(function () {
@@ -103,8 +108,10 @@ export const game = {
   currentQ: 0,
 
   startGame: function () {
-    game.currentQ = 0;
-    triviaAPI.questionReturn();
+    triviaAPI.newGame = true
+    database.ref('game/QandAs/').update({
+      currentQ: 1,
+    }).then(triviaAPI.questionReturn());
   },
 
   displayQ: function (question, answers) {
@@ -157,6 +164,8 @@ export const game = {
       game.userPoints += game.selectionTimer;
       console.log(game.userPoints);
       if (auth.currentUser) {
+        console.log(`currentUser: ${auth.currentUser}`);
+        console.log(`I'm supposed to receive ${game.userPoints}`);
         database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
           points: game.userPoints
         });
@@ -170,9 +179,11 @@ export const game = {
 
     if (game.currentQ >= 10) {
       setTimeout(function () {
-        database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
-          points: 0
-        })
+        if (auth.currentUser) {
+          database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
+            points: 0
+          })
+        }
       }, 2000)
     }
 
@@ -215,7 +226,7 @@ export const game = {
       }
     }
   },
-}
+};
 
 //=====================================================================================================================
 //Game Runtime
