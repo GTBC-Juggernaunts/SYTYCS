@@ -37,13 +37,14 @@ export const triviaAPI = {
       triviaAPI.shuffle(answers);
       //answers now stored in random order inside 'answers' array on host computer
       console.log("pushing question");
+      game.currentQ =+ 1;
       triviaAPI.hostPushQuestion(results.question, answers, results.correct_answer, game.currentQ)
     });
   },
 
-  onQuestionChange: function (question, answers, correctAnswer, activeQuestion) {
+  onQuestionChange: function (question, answers, correctAnswer, activeQuestion, currentQ) {
     if (activeQuestion) {
-      game.currentQ += 1;
+      game.currentQ = currentQ
       game.unselector();
       game.displayQ(atob(question), answers);
       game.currentQStatus = "Active";
@@ -55,13 +56,11 @@ export const triviaAPI = {
   },
 
   hostPushQuestion: function (question, answers, correctAnswer, currentQ) {
-    database.ref("game/").update({
-      currentQ,
-    });
     database.ref("game/QandAs/").update({
       question,
       answers,
       correctAnswer,
+      currentQ,
       activeQuestion: true,
     });
     setTimeout(function () {
@@ -105,7 +104,7 @@ export const game = {
   currentQ: 0,
 
   startGame: function () {
-    game.currentQ = 0;
+    game.currentQ = 1;
     triviaAPI.questionReturn();
   },
 
@@ -159,6 +158,8 @@ export const game = {
       game.userPoints += game.selectionTimer;
       console.log(game.userPoints);
       if (auth.currentUser) {
+        console.log(`currentUser: ${auth.currentUser}`);
+        console.log(`I'm supposed to receive ${game.userPoints}`);
         database.ref(`game/activeUsers/${firebaseAuth.uid}/`).update({
           points: game.userPoints
         });
