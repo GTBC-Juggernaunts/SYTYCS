@@ -9,7 +9,7 @@ html, body {
 
 body {
   background-color: black;
-  background-image: url('https://cdn.pixabay.com/photo/2016/10/22/01/54/wood-1759566_960_720.jpg');
+  background-image: url('../images/darkwood.jpg');
   /* background-size: cover; */
 }
 
