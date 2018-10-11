@@ -24,36 +24,26 @@ $(document).ready(function () {
 
   //Temporary listener for if user is host to start game
   console.log(`checking firebaseAuth isHost: ${firebaseAuth.isHost}`);
-  // if(firebaseAuth.isHost){
-  //   triviaAPI.questionReturn();
-  // }
 
-  database.ref('game').child('activeGame').once('value', function (snapshot) {
-    console.log(`activeGame: ${snapshot.val()}`);
-
-    // change if there are any active users, if only 1 active user and logged
-    // then set currentuser isHost to true and update your reference with matching value
-    // and then claim the game's active host
-    if (!snapshot.val()) {
-      database.ref(`game/activeUsers`).once('value', function (snapshot) {
-        console.log('checking active users');
-        // console.log(Object.keys(snapshot.val()).length);
-        if (Object.keys(snapshot.val()).length === 1 && firebaseAuth.loggedIn) {
-          firebaseAuth.isHost = true;
-          database.ref(`game/activeUsers/${firebaseAuth.uid}/`)
-            .update({
-              isHost: true
-            })
-            .then(function () {
-              firebaseAuth.gameRef.update({
-                activeHost: true
-              })
-            })
-        } else if (firebaseAuth.isHost && Object.keys(snapshot.val()).length >= 3) {
-          console.log('starting game');
-          setTimeout(game.startGame(), 10000);
-        }
-      });
+  // Makes sure 1st user is set as the host
+  // As soon as 3 people join the game will start
+  database.ref(`game/activeUsers`).on('value', function (snapshot) {
+    console.log('checking active users');
+    if (Object.keys(snapshot.val()).length === 1 && firebaseAuth.loggedIn) {
+      console.log(`Assigning the first person and the only person as the host`)
+      firebaseAuth.isHost = true;
+      database.ref(`game/activeUsers/${firebaseAuth.uid}/`)
+        .update({
+          isHost: true
+        })
+        .then(function () {
+          firebaseAuth.gameRef.update({
+            activeHost: true
+          })
+        })
+    } else if (firebaseAuth.isHost && Object.keys(snapshot.val()).length >= 3) {
+      console.log('starting game');
+      setTimeout(game.startGame, 10000);
     }
   });
 
