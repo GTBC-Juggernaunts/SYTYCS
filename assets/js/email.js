@@ -14,9 +14,11 @@ export const mbLayer = {
             method: 'GET',
             success: (response => {
                 if (response.smtp_check === true && response.role === false) {
+                    console.log(response);
                     firebaseAuth.createUser()
                 }
                 else {
+                    console.log(response);
                     // TODO: meaningful error message
                 }
             }),
