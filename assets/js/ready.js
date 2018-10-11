@@ -21,13 +21,14 @@ $(document).ready(function () {
   console.log("document ready...");
   //Listener for player dropping from game
   firebaseAuth.hostListener();
+  console.log('Page loaded')
 
   //Temporary listener for if user is host to start game
   console.log(`checking firebaseAuth isHost: ${firebaseAuth.isHost}`);
 
   // Makes sure 1st user is set as the host
   // As soon as 3 people join the game will start
-  database.ref(`game/activeUsers`).on('value', function (snapshot) {
+  database.ref(`game/activeUsers`).on('child_added', function (snapshot) {
     console.log('checking active users');
     if (Object.keys(snapshot.val()).length === 1 && firebaseAuth.loggedIn) {
       console.log(`Assigning the first person and the only person as the host`)
@@ -41,7 +42,7 @@ $(document).ready(function () {
             activeHost: true
           })
         })
-    } else if (firebaseAuth.isHost && Object.keys(snapshot.val()).length >= 3) {
+    } else if (firebaseAuth.isHost && Object.keys(snapshot.val()).length === 3) {
       console.log('starting game');
       setTimeout(game.startGame, 10000);
     }
