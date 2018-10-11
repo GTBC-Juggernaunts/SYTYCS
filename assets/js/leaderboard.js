@@ -8,15 +8,19 @@ const database = firebase.database();
 const leaderRef = database.ref(`/game/activeUsers/`);
 
 let userArr = [];
+console.log(userArr.length);
 
 // listener for when user logins
 leaderRef.on("child_changed", function(snapshot) {
   let displayName = snapshot.val().displayName;
   let userPoints = snapshot.val().points;
   let newScore = { name: displayName, score: userPoints };
+  console.log(`newScore: ${newScore}`);
   // checks if user already exists in array if not then add them
   if (!isUserExist(userArr, displayName)) {
     userArr.push({ name: displayName, score: userPoints });
+    console.log(`userArr being pushed if user exists`)
+    console.log(userArr)
     displayLeader(userArr);
   } else {
     // loops through array to remove the existing user to update their score with  newScore
@@ -25,6 +29,8 @@ leaderRef.on("child_changed", function(snapshot) {
         userArr.splice(i, 1);
       }
     }
+    console.log(`userArr being pushed`)
+    console.log(userArr)
     userArr.push(newScore);
     sortPlayerScores();
     displayLeader(userArr);
@@ -65,13 +71,14 @@ function sortPlayerScores() {
 }
 
 //execute this to display message
-displayLeader(userArr);
+// displayLeader(userArr);
 
 // displays top 3 leaders to the dom if 3 players are present if not display waiting message
 function displayLeader(array) {
-  if (userArr.length >= 3) {
+  // if (array.length >= 3) {
     console.log(`updating the display with new array`);
-    console.log(array);
+    console.log(array.length);
+    console.log(userArr.length)
     $("#leader0").html(
       `<h6>1st: ${array[0].name} - ${array[0].score} points</h6>`
     );
@@ -81,7 +88,10 @@ function displayLeader(array) {
     $("#leader2").html(
       `<h6>3rd: ${array[2].name} - ${array[2].score} points</h6>`
     );
-  } else {
-    $("#leader0").html(`<h6>Waiting For More Players To Join</h6>`);
-  }
+  // } else {
+    console.log(`updating the display with new array`);
+    console.log(array.length);
+    console.log(userArr.length)
+    // $("#leader0").html(`<h6>Waiting For More Players To Join</h6>`);
+  // }
 }
