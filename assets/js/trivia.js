@@ -37,7 +37,7 @@ export const triviaAPI = {
       triviaAPI.shuffle(answers);
       //answers now stored in random order inside 'answers' array on host computer
       console.log("pushing question");
-      game.currentQ =+ 1;
+      game.currentQ += 1;
       triviaAPI.hostPushQuestion(results.question, answers, results.correct_answer, game.currentQ)
     });
   },
@@ -218,7 +218,7 @@ export const game = {
       }
     }
   },
-}
+};
 
 //=====================================================================================================================
 //Game Runtime
