@@ -33,10 +33,9 @@ export const firebaseAuth = {
   // Reset user info
   resetUserInfo: () => {
     firebaseAuth.userDisplayName = '',
-    firebaseAuth.loggedIn = false,
-    firebaseAuth.uid = '',
-    firebaseAuth.gameIsHost = '',
-    firebaseAuth.isHost = false
+      firebaseAuth.loggedIn = false,
+      firebaseAuth.uid = '',
+      firebaseAuth.gameIsHost = ''
   },
 
   // Sign users out
@@ -136,7 +135,13 @@ export const firebaseAuth = {
         firebaseAuth.gameHostCheck();
         // disconnect logic here
         console.log(`disconnecting User using the disconnect method`)
-        firebaseAuth.activeUsersRef.onDisconnect().remove();
+        firebaseAuth.activeUsersRef.onDisconnect().remove()
+        console.log(firebaseAuth)
+        if (firebaseAuth.isHost) {
+          firebaseAuth.gameRef.update({
+            activeHost: false
+          })
+        }
       } else {
         firebaseAuth.resetUserInfo()
         console.log(`I just reset all of the users information when they signed out`)
@@ -148,6 +153,7 @@ export const firebaseAuth = {
           `game/activeUsers/${firebaseAuth.uid}`
         );
         if (firebaseAuth.isHost) {
+          firebaseAuth.isHost = false;
           firebaseAuth.gameRef.update({
             activeHost: false
           });
