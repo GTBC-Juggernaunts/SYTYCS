@@ -23,8 +23,12 @@ $(document).ready(function() {
   database.ref('game').child('activeGame').once('value', function (snapshot) {
     console.log(`activeGame: ${snapshot.val()}`);
     //console.log(`firsbaseauth.is host is: ${firebaseAuth.isHost} and number of users is ${Object.keys(snapshot.val()).length >= 3}`);
+
     if (!snapshot.val()) {
-      database.ref(`game/activeUsers`).on('value', function (snapshot) {
+    // change if there are any active users, if only 1 active user and logged
+    // then set currentuser isHost to true and update your reference with matching value
+    // and then claim the game's active host
+      database.ref(`game/activeUsers`).once('value', function (snapshot) {
         console.log('checking active users');
         // console.log(Object.keys(snapshot.val()).length);
         if (Object.keys(snapshot.val()).length === 1 && firebaseAuth.loggedIn) {
